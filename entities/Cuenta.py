@@ -53,3 +53,15 @@ class Cuenta(Base):
 
     def __repr__(self):
         return f"<Cuenta(id_cuenta={self.id_cuenta}, numero_cuenta='{self.numero_cuenta}', tipo_cuenta='{self.tipo_cuenta}', saldo='{self.saldo}', fecha_apertura={self.fecha_apertura},estado={self.estado})>"
+
+    operaciones_origen = relationship(
+        "Operacion",
+        foreign_keys="Operacion.id_cuenta_origen",
+        back_populates="cuenta_origen",
+    )
+
+    operaciones_destino = relationship(
+        "Operacion",
+        foreign_keys="Operacion.id_cuenta_destino",
+        back_populates="cuenta_destino",
+    )
