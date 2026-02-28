@@ -12,6 +12,11 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from database.config import Base
 from entities.Cliente import Cliente
 from entities.Cuenta import Cuenta
+from entities.Banco import Banco
+from entities.Operacion import Operacion
+from entities.Tarjeta import Tarjeta
+from entities.Usuario_App import Usuario_App
+from entities.Usuario import Usuario
 
 # this is the Alembic Config object, which provides
 # access t
