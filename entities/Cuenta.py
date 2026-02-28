@@ -3,7 +3,7 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from database.config import Base
-from sqlalchemy import Column, ForeignKey, String, Boolean, DateTime, Date
+from sqlalchemy import Column, ForeignKey, String, Boolean, DateTime, Date, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -25,7 +25,7 @@ class Cuenta(Base):
     )
     numero_cuenta = Column(String(80), nullable=True)
     tipo_cuenta = Column(String(80), nullable=True)
-    saldo = Column(String(80), nullable=True)
+    saldo = Column(Numeric(12, 2), nullable=False, default=0)
     fecha_apertura = Column(Date, nullable=True)
     estado = Column(Boolean, default=False, nullable=True)
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
