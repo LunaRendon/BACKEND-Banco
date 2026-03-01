@@ -404,7 +404,7 @@ class ClienteCRUD:
         Args:
             id_cliente (UUID): Identificador único del cliente.
            direccion(str): nueva direccion del cliente
-            id_biblioteca (UUID): Identificador único del banco.
+            id_banco (UUID): Identificador único del banco.
 
         Returns:
             Optional[Cliente]: Cliente actualizado o None si no existe.
