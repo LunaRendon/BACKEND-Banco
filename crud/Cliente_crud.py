@@ -107,7 +107,7 @@ class ClienteCRUD:
         Obtiene un cliente específico por su código y su banco.
 
         Args:
-            codigo (UUID): Identificador único del cliente.
+            id_cliente (UUID): Identificador único del cliente.
             id_banco (UUID): Identificador único del banco.
 
         Returns:
