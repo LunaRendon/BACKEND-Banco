@@ -1,5 +1,5 @@
 """
-API de Cliente - Endpoints para gestión de cliente
+Endpoint de Cliente - Endpoints para gestión de cliente
 """
 
 from typing import List
