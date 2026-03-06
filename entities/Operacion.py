@@ -28,9 +28,7 @@ class Operacion(Base):
 
     tipo_operacion = Column(String(50), nullable=False)
     monto = Column(Numeric(12, 2), nullable=False)
-
     fecha = Column(DateTime(timezone=True), server_default=func.now())
-
     id_cuenta_origen = Column(
         UUID(as_uuid=True), ForeignKey("cuenta.id_cuenta"), nullable=True
     )
