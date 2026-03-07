@@ -212,7 +212,7 @@ class CuentaCRUD:
         Obtiene cuentas según su estado.
 
         Args:
-            testado(str):estado actual de la cuenta
+            estado(str):estado actual de la cuenta
             id_cliente(UUID): id del cliente aosciado a la cuenta
         Returns:
             List[Cuenta]: Lista de cuentas segun el estado"""
