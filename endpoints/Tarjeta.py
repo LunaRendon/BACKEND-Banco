@@ -8,16 +8,16 @@ from uuid import UUID
 from crud.Tarjeta_crud import TarjetaCRUD
 from database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas.schemas import TarjetaCreate, TarjetaResponse, TarjetaUpdate, RespuestaAPI
+from schemas.Tarjeta_schema import TarjetaCreate, TarjetaResponse, TarjetaUpdate
+from schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/tarjetas", tags=["tarjetas"])
 
+
 @router.get("/", response_model=List[TarjetaResponse])
 async def obtener_todas_tarjetas(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db)
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
     """
     Obtener todas las tarjetas registradas.
@@ -38,7 +38,7 @@ async def obtener_todas_tarjetas(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al obtener tarjetas: {str(e)}",
         )
-        
+
 
 @router.get("/{id_cuenta}", response_model=List[TarjetaResponse])
 async def obtener_tarjetas(
@@ -46,7 +46,7 @@ async def obtener_tarjetas(
 ):
     """
     Obtener todas las tarjetas asociadas a una cuenta.
-    
+
     Args:
         id_cuenta (UUID): ID de la cuenta para filtrar las tarjetas.
         skip (int): Número de registros a omitir para paginación.
@@ -73,7 +73,7 @@ async def obtener_tarjeta(
 ):
     """
     Obtener una tarjeta específica.
-    
+
     Args:
         id_tarjeta (UUID): ID de la tarjeta a obtener.
         id_cuenta (UUID): ID de la cuenta a la que pertenece la tarjeta.
@@ -102,13 +102,15 @@ async def obtener_tarjeta(
         )
 
 
-@router.get("/{id_cuenta}/numero/{numero_tarjeta}", response_model=List[TarjetaResponse])
+@router.get(
+    "/{id_cuenta}/numero/{numero_tarjeta}", response_model=List[TarjetaResponse]
+)
 async def obtener_tarjetas_por_numero(
     numero_tarjeta: str, id_cuenta: UUID, db: Session = Depends(get_db)
 ):
     """
     Buscar tarjetas por número.
-    
+
     Args:
         numero_tarjeta (str): Número de la tarjeta a buscar.
         id_cuenta (UUID): ID de la cuenta a la que pertenecen las tarjetas.
@@ -134,11 +136,11 @@ async def obtener_tarjetas_por_tipo(
 ):
     """
     Buscar tarjetas por tipo.
-    
+
     args:
         tipo_tarjeta (str): Tipo de tarjeta (e.g., "débito", "crédito").
         id_cuenta (UUID): ID de la cuenta a la que pertenecen las tarjetas.
-        
+
         Returns: List[TarjetaResponse]: Lista de tarjetas que coinciden con el tipo y la cuenta.
     """
     try:
@@ -159,12 +161,12 @@ async def obtener_tarjetas_por_estado(
 ):
     """
     Buscar tarjetas por estado.
-    
+
     args:
         estado (str): Estado de la tarjeta.
-        id_cuenta (UUID): ID de la cuenta a la que pertenecen las tarjetas.   
-        
-        Returns: List[TarjetaResponse]: Lista de tarjetas que coinciden con el estado y la cuenta. 
+        id_cuenta (UUID): ID de la cuenta a la que pertenecen las tarjetas.
+
+        Returns: List[TarjetaResponse]: Lista de tarjetas que coinciden con el estado y la cuenta.
     """
     try:
         tarjeta_crud = TarjetaCRUD(db)
@@ -182,7 +184,7 @@ async def obtener_tarjetas_por_estado(
 async def crear_tarjeta(tarjeta_data: TarjetaCreate, db: Session = Depends(get_db)):
     """
     Crear una nueva tarjeta.
-    
+
     Args:
         tarjeta_data (TarjetaCreate): Datos de la tarjeta a crear.
         db (Session): Sesión de base de datos.
@@ -223,7 +225,7 @@ async def actualizar_tarjeta(
 ):
     """
     Actualizar una tarjeta existente.
-    
+
     Args:
         id_tarjeta (UUID): ID de la tarjeta.
         id_cuenta (UUID): ID de la cuenta.

@@ -8,7 +8,11 @@ from uuid import UUID
 from crud.Usuario_App_crud import UsuarioAppCRUD
 from database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas import UsuarioAppCreate, UsuarioAppResponse, UsuarioAppUpdate
+from schemas.Usuario_App_schema import (
+    UsuarioAppCreate,
+    UsuarioAppResponse,
+    UsuarioAppUpdate,
+)
 from schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
@@ -43,9 +47,7 @@ async def obtener_usuarios(
 
 
 @router.get("/username/{username}", response_model=UsuarioAppResponse)
-async def obtener_usuario_por_username(
-    username: str, db: Session = Depends(get_db)
-):
+async def obtener_usuario_por_username(username: str, db: Session = Depends(get_db)):
     """
     Buscar usuario por username.
 
@@ -78,9 +80,7 @@ async def obtener_usuario_por_username(
 
 
 @router.get("/estado/{estado}", response_model=List[UsuarioAppResponse])
-async def obtener_usuarios_por_estado(
-    estado: str, db: Session = Depends(get_db)
-):
+async def obtener_usuarios_por_estado(estado: str, db: Session = Depends(get_db)):
     """
     Buscar usuarios por estado.
 
@@ -101,7 +101,8 @@ async def obtener_usuarios_por_estado(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al buscar usuarios por estado: {str(e)}",
         )
-        
+
+
 @router.get("/{id_usuario}", response_model=UsuarioAppResponse)
 async def obtener_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
     """
@@ -135,13 +136,10 @@ async def obtener_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
         )
 
 
-
 @router.post(
     "/", response_model=UsuarioAppResponse, status_code=status.HTTP_201_CREATED
 )
-async def crear_usuario(
-    usuario_data: UsuarioAppCreate, db: Session = Depends(get_db)
-):
+async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(get_db)):
     """
     Crear un nuevo usuario de la aplicación.
 
@@ -203,9 +201,7 @@ async def actualizar_usuario(
             )
 
         campos_actualizacion = {
-            k: v
-            for k, v in usuario_data.dict().items()
-            if v is not None
+            k: v for k, v in usuario_data.dict().items() if v is not None
         }
 
         usuario_actualizado = usuario_crud.actualizar_usuario(
