@@ -77,7 +77,7 @@ async def obtener_cliente(
 
 @router.get("/{id_banco}/nombre/{nombre}", response_model=List[ClienteResponse])
 async def obtener_clientes_por_nombre(
-    nombre: str, id_biblioteca: UUID, db: Session = Depends(get_db)
+    nombre: str, id_banco: UUID, db: Session = Depends(get_db)
 ):
     """
     Buscar clientes por nombre dentro del banco.
@@ -92,7 +92,7 @@ async def obtener_clientes_por_nombre(
     """
     try:
         cliente_crud = ClienteCRUD(db)
-        clientes = cliente_crud.obtener_clientes_por_nombre(nombre, id_biblioteca)
+        clientes = cliente_crud.obtener_clientes_por_nombre(nombre, id_banco)
         return clientes
 
     except Exception as e:
@@ -112,7 +112,7 @@ async def obtener_clientes_por_NumDocumento(
     Buscar clientes por el numero del documento
 
     Args:
-        id_documento (str): numero del documento del cliente
+        num_documento (str): numero del documento del cliente
         id_banco (UUID): ID del banco.
         db (Session): Sesión de base de datos.
 
@@ -141,8 +141,8 @@ async def obtener_clientes_por_TipoDocumento(
     Buscar clientes según el detalle del tipo de cliente.
 
     Args:
-        detalle_tipo (str): Detalle del tipo de cliente (ej. pregrado, posgrado).
-        id_biblioteca (UUID): ID de la biblioteca.
+        tipo_documento (str): tipo de documento(CC,TI)
+        id_banco (UUID): ID del banco
         db (Session): Sesión de base de datos.
 
     Returns:
