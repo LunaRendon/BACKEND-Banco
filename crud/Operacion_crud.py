@@ -88,6 +88,19 @@ class OperacionCRUD:
     def obtener_operaciones(self, skip: int = 0, limit: int = 100) -> List[Operacion]:
         return self.db.query(Operacion).offset(skip).limit(limit).all()
 
+    def actualizar_operacion(self, id_operacion: UUID, **kwargs) -> Optional[Operacion]:
+        operacion = self.obtener_operacion(id_operacion)
+        if not operacion:
+            return None
+
+        for key, value in kwargs.items():
+            if hasattr(operacion, key) and value is not None:
+                setattr(operacion, key, value)
+
+        self.db.commit()
+        self.db.refresh(operacion)
+        return operacion
+
     def eliminar_operacion(self, id_operacion: UUID) -> bool:
         operacion = self.obtener_operacion(id_operacion)
         if operacion:
