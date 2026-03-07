@@ -44,4 +44,4 @@ app.include_router(Usuario.router)
 
 @app.get("/")
 def inicio():
-    return {"mensaje": "API Usuarios y Productos", "docs": "/docs"}
+    return {"mensaje": "API Banco", "docs": "/docs"}
