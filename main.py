@@ -433,7 +433,7 @@ def menu_usuarios():
         if op == "0":
             break
         if op == "1":
-            UsuarioCRUD.mostrar_usuarios()
+            mostrar_usuarios()
         elif op == "2":
             uid = input("ID usuario: ").strip()
             if uid:
