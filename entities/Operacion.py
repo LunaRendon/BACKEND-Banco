@@ -30,11 +30,11 @@ class Operacion(Base):
     monto = Column(Numeric(12, 2), nullable=False)
     fecha = Column(DateTime(timezone=True), server_default=func.now())
     id_cuenta_origen = Column(
-        UUID(as_uuid=True), ForeignKey("cuenta.id_cuenta"), nullable=True
+        UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), nullable=True
     )
 
     id_cuenta_destino = Column(
-        UUID(as_uuid=True), ForeignKey("cuenta.id_cuenta"), nullable=True
+        UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), nullable=True
     )
 
     fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
