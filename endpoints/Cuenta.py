@@ -8,7 +8,8 @@ from uuid import UUID
 from crud.Cuenta_crud import CuentaCRUD
 from database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas.schemas import CuentaCreate, CuentaResponse, CuentaUpdate, RespuestaAPI
+from schemas import CuentaCreate, CuentaResponse, CuentaUpdate
+from schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/cuentas", tags=["cuentas"])

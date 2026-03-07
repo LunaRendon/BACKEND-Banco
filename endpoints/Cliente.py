@@ -8,7 +8,8 @@ from uuid import UUID
 from crud.Cliente_crud import ClienteCRUD
 from database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas.schemas import ClienteCreate, ClienteResponse, ClienteUpdate, RespuestaAPI
+from schemas import ClienteCreate, ClienteResponse, ClienteUpdate
+from schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/clientes", tags=["clientes"])
