@@ -25,6 +25,7 @@ from database.config import create_tables
 
 if __name__ == "__main__":
     try:
+        print("Conectando a la base de datos...")
         create_tables()
         print("Tablas creadas correctamente en Neon.")
     except OperationalError as e:
