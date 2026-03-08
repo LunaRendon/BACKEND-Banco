@@ -56,7 +56,7 @@ def menu_bancos():
             bid = UUID(input("ID banco: "))
             if bid:
                 try:
-                    bancos_crud.obtener_banco(bid)
+                    b = bancos_crud.obtener_banco(bid)
                     print(f"  {b}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -545,7 +545,7 @@ def _iniciar_api():
     """Ejecuta uvicorn en un hilo en segundo plano."""
     import uvicorn
 
-    uvicorn.run("src.app:app", host="0.0.0.0", port=8000, log_level="warning")
+    uvicorn.run("utils.app:app", host="127.0.0.1", port=8000, log_level="warning")
 
 
 def main():
