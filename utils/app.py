@@ -1,6 +1,6 @@
 """
 Aplicación FastAPI. Ejecutar con:
-  uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
+  uvicorn utils.app:app --reload --host 0.0.0.0 --port 8000
 """
 
 from contextlib import asynccontextmanager
