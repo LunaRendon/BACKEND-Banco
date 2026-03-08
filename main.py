@@ -7,6 +7,8 @@ import sys
 import threading
 import time
 from uuid import UUID
+from database.config import SessionLocal
+from datetime import date
 
 # Permitir importar desde src cuando se ejecuta desde la raíz del proyecto
 sys.path.insert(0, ".")
@@ -21,15 +23,14 @@ from crud.Usuario_App_crud import UsuarioAppCRUD
 
 
 def mostrar_usuarios():
+    db = SessionLocal()
+    usuario_crud = UsuarioCRUD(db)
     try:
-        usuarios = UsuarioCRUD.obtener_usuarios()
+        usuarios = usuario_crud.obtener_usuarios()
+        print(usuarios)
         if not usuarios:
             print("  No hay usuarios.")
             return
-        for u in usuarios:
-            print(
-                f"  {u['id']} | {u['nombre_usuario']} | {u['email']} | activo={u['activo']}"
-            )
     except Exception as e:
         err = str(e)
         if "10061" in err or "Connection refused" in err or "denegó" in err.lower():
@@ -41,7 +42,8 @@ def mostrar_usuarios():
 
 
 def menu_bancos():
-    bancos_crud = BancoCRUD
+    db = SessionLocal()
+    bancos_crud = BancoCRUD(db)
     while True:
         print("\n--- Bancos ---")
         print(
@@ -51,7 +53,8 @@ def menu_bancos():
         if op == "0":
             break
         if op == "1":
-            bancos_crud.obtener_bancos
+            b = bancos_crud.obtener_bancos()
+            print(b)
         elif op == "2":
             bid = UUID(input("ID banco: "))
             if bid:
@@ -109,6 +112,8 @@ def menu_bancos():
 
 
 def menu_clientes():
+    db = SessionLocal()
+    clientes_crud = ClienteCRUD(db)
     while True:
         print("\n--- Clientes ---")
         print(
@@ -118,12 +123,14 @@ def menu_clientes():
         if op == "0":
             break
         if op == "1":
-            ClienteCRUD.obtener_clientes()
+            clientes = clientes_crud.obtener_clientes()
+            print(clientes)
         elif op == "2":
             cid = input("ID del cliente: ").strip()
-            if cid:
+            bid = input("ID del banco: ").strip()
+            if cid and bid:
                 try:
-                    c = ClienteCRUD.obtener_cliente(cid)
+                    c = clientes_crud.obtener_cliente(cid, bid)
                     print(f"  {c}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -147,7 +154,7 @@ def menu_clientes():
                 and id_usuario
             ):
                 try:
-                    ClienteCRUD.crear_cliente(
+                    clientes_crud.crear_cliente(
                         nombre,
                         num_documento,
                         tipo_documento,
@@ -186,7 +193,7 @@ def menu_clientes():
                     kwargs["direccion"] = direccion
                 if id_banco:
                     kwargs["id_banco"] = id_banco
-                ClienteCRUD.actualizar_cliente(cid, **kwargs)
+                clientes_crud.actualizar_cliente(cid, **kwargs)
                 print("  Cliente actualizado.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -194,13 +201,15 @@ def menu_clientes():
             cid = input("ID cliente a eliminar: ").strip()
             if cid:
                 try:
-                    ClienteCRUD.eliminar_cliente(cid)
+                    clientes_crud.eliminar_cliente(cid)
                     print("  Cliente eliminado.")
                 except Exception as e:
                     print(f"  Error: {e}")
 
 
 def menu_cuentas():
+    db = SessionLocal()
+    cuentas_crud = CuentaCRUD(db)
     while True:
         print("\n--- Cuentas ---")
         print(
@@ -210,12 +219,14 @@ def menu_cuentas():
         if op == "0":
             break
         if op == "1":
-            CuentaCRUD.obtener_cuentas()
+            cuentas = cuentas_crud.obtener_cuentas()
+            print(cuentas)
         elif op == "2":
             cid = input("ID de la cuenta: ").strip()
-            if cid:
+            clid = input("Id dl cliente: ").strip()
+            if cid and clid:
                 try:
-                    c = CuentaCRUD.obtener_cuenta(cid)
+                    c = cuentas_crud.obtener_cuenta(cid, clid)
                     print(f"  {c}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -237,7 +248,7 @@ def menu_cuentas():
                 and id_usuario
             ):
                 try:
-                    CuentaCRUD.crear_cuenta(
+                    cuentas_crud.crear_cuenta(
                         numero_cuenta,
                         tipo_cuenta,
                         saldo,
@@ -263,7 +274,7 @@ def menu_cuentas():
                     kwargs["tipo_cuenta"] = tipo_cuenta
                 if estado:
                     kwargs["estado"] = estado
-                CuentaCRUD.actualizar_cuenta(cid, **kwargs)
+                cuentas_crud.actualizar_cuenta(cid, **kwargs)
                 print("  Cuenta actualizada.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -271,13 +282,15 @@ def menu_cuentas():
             oid = input("ID cuenta a eliminar: ").strip()
             if oid:
                 try:
-                    CuentaCRUD.eliminar_cuenta(oid)
+                    cuentas_crud.eliminar_cuenta(oid)
                     print("  Cuenta eliminada.")
                 except Exception as e:
                     print(f"  Error: {e}")
 
 
 def menu_operaciones():
+    db = SessionLocal()
+    operacion_crud = OperacionCRUD(db)
     while True:
         print("\n--- Operaciones ---")
         print("1. Listar \n 2. Ver uno \n 3. Crear \n 4. Eliminar \n 0. Volver")
@@ -285,12 +298,13 @@ def menu_operaciones():
         if op == "0":
             break
         if op == "1":
-            OperacionCRUD.obtener_operaciones()
+            ope = operacion_crud.obtener_operaciones()
+            print(ope)
         elif op == "2":
             oid = input("ID de la la operación: ").strip()
             if oid:
                 try:
-                    o = OperacionCRUD.obtener_operacion(oid)
+                    o = operacion_crud.obtener_operacion(oid)
                     print(f"  {o}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -300,13 +314,15 @@ def menu_operaciones():
             cid = input("ID operacion  a eliminar: ").strip()
             if cid:
                 try:
-                    OperacionCRUD.eliminar_operacion(cid)
+                    operacion_crud.eliminar_operacion(cid)
                     print("  Operacion eliminada.")
                 except Exception as e:
                     print(f"  Error: {e}")
 
 
 def crear_operacion_menu():
+    db = SessionLocal()
+    operacion_crud = OperacionCRUD(db)
     print("\n--- Crear operación ---")
     print("1. Depósito \n 2. Retiro \n 3. Transferencia")
     tipo = input("Seleccione tipo: ").strip()
@@ -315,19 +331,19 @@ def crear_operacion_menu():
     if tipo == "1":
         id_cuenta_destino = input("ID cuenta destino: ").strip()
 
-        OperacionCRUD.crear_operacion(
+        operacion_crud.crear_operacion(
             "deposito", monto, None, id_cuenta_destino, id_usuario
         )
     elif tipo == "2":
         id_cuenta_origen = input("ID cuenta origen: ").strip()
-        OperacionCRUD.crear_operacion(
+        operacion_crud.crear_operacion(
             "retiro", monto, id_cuenta_origen, None, id_usuario
         )
     elif tipo == "3":
         id_cuenta_origen = input("ID cuenta origen: ").strip()
         id_cuenta_destino = input("ID cuenta destino: ").strip()
 
-        OperacionCRUD.crear_operacion(
+        operacion_crud.crear_operacion(
             "transferencia", monto, id_cuenta_origen, id_cuenta_destino, id_usuario
         )
     else:
@@ -335,6 +351,8 @@ def crear_operacion_menu():
 
 
 def menu_tarjetas():
+    db = SessionLocal()
+    tarjetas_crud = TarjetaCRUD(db)
     while True:
         print("\n--- Tarjetas ---")
         print(
@@ -344,12 +362,14 @@ def menu_tarjetas():
         if op == "0":
             break
         if op == "1":
-            TarjetaCRUD.obtener_tarjetas()
+            tarjeta = tarjetas_crud.obtener_tarjetas()
+            print(tarjeta)
         elif op == "2":
             tid = input("ID de la tarjeta: ").strip()
-            if tid:
+            cid = input("ID de la cuenta: ").strip()
+            if tid and cid:
                 try:
-                    t = TarjetaCRUD.obtener_tarjeta(tid)
+                    t = tarjetas_crud.obtener_tarjeta(tid, cid)
                     print(f"  {t}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -371,7 +391,7 @@ def menu_tarjetas():
                 and id_usuario
             ):
                 try:
-                    TarjetaCRUD.crear_tarjeta(
+                    tarjetas_crud.crear_tarjeta(
                         numero_tarjeta,
                         tipo_tarjeta,
                         fecha_vencimiento,
@@ -400,7 +420,7 @@ def menu_tarjetas():
                     kwargs["fecha_vencimiento"] = fecha_vencimiento
                 if cvv:
                     kwargs["cvv"] = cvv
-                TarjetaCRUD.actualizar_tarjeta(tid, **kwargs)
+                tarjetas_crud.actualizar_tarjeta(tid, **kwargs)
                 print("  Tarjeta actualizada.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -413,7 +433,7 @@ def menu_tarjetas():
                 kwargs = {}
                 if estado:
                     kwargs["estado"] = estado
-                TarjetaCRUD.actualizar_estado(tid, **kwargs)
+                tarjetas_crud.actualizar_estado(tid, **kwargs)
                 print("  Tarjeta actualizada.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -421,13 +441,15 @@ def menu_tarjetas():
             tid = input("ID tarjeta a eliminar: ").strip()
             if tid:
                 try:
-                    TarjetaCRUD.eliminar_tarjeta(tid)
+                    tarjetas_crud.eliminar_tarjeta(tid)
                     print("  Tarjeta eliminada.")
                 except Exception as e:
                     print(f"  Error: {e}")
 
 
 def menu_usuarios():
+    db = SessionLocal()
+    usuarios_crud = UsuarioCRUD(db)
     while True:
         print("\n--- Usuarios ---")
         print("1. Listar  2. Ver uno  3. Crear  4. Actualizar  5. Eliminar  0. Volver")
@@ -440,7 +462,7 @@ def menu_usuarios():
             uid = input("ID usuario: ").strip()
             if uid:
                 try:
-                    u = UsuarioCRUD.obtener_usuario(uid)
+                    u = usuarios_crud.obtener_usuario(uid)
                     print(f"  {u}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -451,7 +473,9 @@ def menu_usuarios():
             contraseña = input("Contraseña: ").strip()
             if nombre and nombre_usuario and email and contraseña:
                 try:
-                    UsuarioCRUD.crear_usuario(nombre, nombre_usuario, email, contraseña)
+                    usuarios_crud.crear_usuario(
+                        nombre, nombre_usuario, email, contraseña
+                    )
                     print("  Usuario creado.")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -469,7 +493,7 @@ def menu_usuarios():
                     kwargs["nombre"] = nombre
                 if email:
                     kwargs["email"] = email
-                UsuarioCRUD.actualizar_usuario(uid, **kwargs)
+                usuarios_crud.actualizar_usuario(uid, **kwargs)
                 print("  Usuario actualizado.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -477,13 +501,15 @@ def menu_usuarios():
             uid = input("ID usuario a eliminar: ").strip()
             if uid:
                 try:
-                    UsuarioCRUD.eliminar_usuario(uid)
+                    usuarios_crud.eliminar_usuario(uid)
                     print("  Usuario eliminado.")
                 except Exception as e:
                     print(f"  Error: {e}")
 
 
 def menu_usuariosApp():
+    db = SessionLocal()
+    usuAp_crud = UsuarioAppCRUD(db)
     while True:
         print("\n--- Usuarios de la aplicación ---")
         print("1. Listar  2. Ver uno  3. Crear  4. Actualizar  5. Eliminar  0. Volver")
@@ -491,23 +517,33 @@ def menu_usuariosApp():
         if op == "0":
             break
         if op == "1":
-            UsuarioAppCRUD.obtener_usuarios()
+            uap = usuAp_crud.obtener_usuariosApp()
+            print(uap)
         elif op == "2":
             uaid = input("ID usuario: ").strip()
             if uaid:
                 try:
-                    ua = UsuarioAppCRUD.obtener_usuario(uaid)
+                    ua = usuAp_crud.obtener_usuario(uaid)
                     print(f"  {ua}")
                 except Exception as e:
                     print(f"  Error: {e}")
         elif op == "3":
             username = input("Nombre de usuario: ").strip()
             contraseña_hash = input("Contraseña: ").strip()
-            estado = input("Estado: ").strip()
+            fecha_registro = date
+            estado_input = input("Estado (true/false): ").strip().lower()
+            estado = estado_input == "true"
+            id_cuenta = input("Id de la cuenta: ").strip()
             if username and contraseña_hash and estado:
                 try:
-                    UsuarioAppCRUD.crear_usuario(username, contraseña_hash, estado)
+                    usuAp_crud.crear_usuario(
+                        username=username,
+                        contraseña_hash=contraseña_hash,
+                        estado=estado,
+                        id_cuenta=id_cuenta,
+                    )
                     print("  Usuario creado.")
+
                 except Exception as e:
                     print(f"  Error: {e}")
             else:
@@ -519,6 +555,7 @@ def menu_usuariosApp():
             username = input("Nombre de usuario (vacío=no cambiar): ").strip()
             contraseña_hash = input("Contraseña (vacío=no cambiar): ").strip()
             estado = input("Estado (vacío=no cambiar): ").strip()
+            id_cuenta = input("Id de la cuenta: ").strip()
             try:
                 kwargs = {}
                 if username:
@@ -527,7 +564,7 @@ def menu_usuariosApp():
                     kwargs["contraseña_hash"] = contraseña_hash
                 if estado:
                     kwargs["estado"] = estado
-                UsuarioAppCRUD.actualizar_usuario(uaid, **kwargs)
+                usuAp_crud.actualizar_usuario(uaid, **kwargs)
                 print("  Usuario actualizado.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -535,7 +572,7 @@ def menu_usuariosApp():
             uaid = input("ID usuario a eliminar: ").strip()
             if uaid:
                 try:
-                    UsuarioAppCRUD.eliminar_usuario(uaid)
+                    usuAp_crud.eliminar_usuario(uaid)
                     print("  Usuario eliminado.")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -551,14 +588,14 @@ def _iniciar_api():
 def main():
     print("API Banco - Menú por consola")
     print("Iniciando API en http://localhost:8000 ...")
-    server = threading.Thread(target=_iniciar_api, daemon=True)
+    server = threading.Thread(target=_iniciar_api)
     server.start()
-    time.sleep(1.5)
+    time.sleep(3)
     print("API lista.\n")
     while True:
         print("\n========== MENÚ ==========")
         print(
-            "1. Bancos  2. Clientes  3. Cuentas   4. Operaciones  5. Tarjetas   6. Usuarios de la aplicacion  7. Usuario"
+            "1. Bancos  2. Clientes  3. Cuentas   4. Operaciones  5. Tarjetas   6. Usuarios de la aplicacion  7. Usuario.   0. Salir"
         )
         op = input("Opción: ").strip()
         if op == "0":
@@ -570,9 +607,20 @@ def main():
             menu_clientes()
         elif op == "3":
             menu_cuentas()
+        elif op == "4":
+            menu_operaciones()
+        elif op == "5":
+            menu_tarjetas()
+        elif op == "6":
+            menu_usuariosApp()
+        elif op == "7":
+            menu_usuarios()
         else:
             print("Opción no válida.")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nPrograma detenido por el usuario.")

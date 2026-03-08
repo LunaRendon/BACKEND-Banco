@@ -143,7 +143,7 @@ class UsuarioCRUD:
         Returns:
             Usuario encontrado o None
         """
-        return self.db.query(Usuario).filter(Usuario.id == usuario_id).first()
+        return self.db.query(Usuario).filter(Usuario.id_usuario == usuario_id).first()
 
     def obtener_usuario_por_email(self, email: str) -> Optional[Usuario]:
         """
