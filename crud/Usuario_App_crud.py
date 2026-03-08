@@ -17,7 +17,7 @@ class UsuarioAppCRUD:
         self,
         username: str,
         contraseña_hash: str,
-        estado: str,
+        estado: bool,
         id_cuenta: UUID,
     ) -> Usuario_App:
         """
@@ -37,21 +37,15 @@ class UsuarioAppCRUD:
         if len(contraseña_hash) > 255:
             raise ValueError("La contraseña no puede exceder 255 caracteres")
 
-        if not estado or len(estado.strip()) == 0:
+        if not estado:
             raise ValueError("El estado es obligatorio")
-        if len(estado) > 20:
-            raise ValueError("El estado no puede exceder 20 caracteres")
 
         if not id_cuenta:
             raise ValueError("La cuenta es obligatoria")
 
         from entities.Cuenta import Cuenta
 
-        cuenta = (
-            self.db.query(Cuenta)
-            .filter(Cuenta.id_cuenta == id_cuenta)
-            .first()
-        )
+        cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
 
         if not cuenta:
             raise ValueError("La cuenta especificada no existe")
@@ -59,7 +53,7 @@ class UsuarioAppCRUD:
         usuario = Usuario_App(
             username=username.strip(),
             contraseña_hash=contraseña_hash.strip(),
-            estado=estado.strip(),
+            estado=estado,
             id_cuenta=id_cuenta,
         )
 
@@ -72,46 +66,25 @@ class UsuarioAppCRUD:
         """Obtiene un usuario por su id."""
         return (
             self.db.query(Usuario_App)
-            .options(selectinload(Usuario_App.cuentas))
+            .options(selectinload(Usuario_App.cuenta))
             .filter(Usuario_App.id_usuario == id_usuario)
             .first()
         )
 
-    def obtener_usuarios(
-        self, skip: int = 0, limit: int = 100
-    ) -> List[Usuario_App]:
-        """Lista todos los usuarios."""
-        return (
-            self.db.query(Usuario_App)
-            .options(selectinload(Usuario_App.cuentas))
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
+    def obtener_usuariosApp(self, skip: int = 0, limit: int = 100) -> List[Usuario_App]:
+        return self.db.query(Usuario_App).offset(skip).limit(limit).all()
 
-    def obtener_usuario_por_username(
-        self, username: str
-    ) -> Optional[Usuario_App]:
+    def obtener_usuario_por_username(self, username: str) -> Optional[Usuario_App]:
         """Obtiene un usuario por username."""
         return (
-            self.db.query(Usuario_App)
-            .filter(Usuario_App.username == username)
-            .first()
+            self.db.query(Usuario_App).filter(Usuario_App.username == username).first()
         )
 
-    def obtener_usuarios_por_estado(
-        self, estado: str
-    ) -> List[Usuario_App]:
+    def obtener_usuarios_por_estado(self, estado: bool) -> List[Usuario_App]:
         """Obtiene usuarios por estado."""
-        return (
-            self.db.query(Usuario_App)
-            .filter(Usuario_App.estado == estado)
-            .all()
-        )
+        return self.db.query(Usuario_App).filter(Usuario_App.estado == estado).all()
 
-    def actualizar_usuario(
-        self, id_usuario: UUID, **kwargs
-    ) -> Optional[Usuario_App]:
+    def actualizar_usuario(self, id_usuario: UUID, **kwargs) -> Optional[Usuario_App]:
         """
         Actualiza los datos de un usuario.
         """
@@ -145,25 +118,16 @@ class UsuarioAppCRUD:
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
-
-            if not estado or len(estado.strip()) == 0:
+            if not estado or len(estado) == 0:
                 raise ValueError("El estado es obligatorio")
-
-            if len(estado) > 20:
-                raise ValueError("El estado no puede exceder 20 caracteres")
-
-            kwargs["estado"] = estado.strip()
+            kwargs["estado"] = estado
 
         if "id_cuenta" in kwargs:
             id_cuenta = kwargs["id_cuenta"]
 
             from entities.Cuenta import Cuenta
 
-            cuenta = (
-                self.db.query(Cuenta)
-                .filter(Cuenta.id_cuenta == id_cuenta)
-                .first()
-            )
+            cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
 
             if not cuenta:
                 raise ValueError("La cuenta especificada no existe")

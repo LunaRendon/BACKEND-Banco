@@ -6,6 +6,7 @@ Al ejecutar main.py se inicia la API en segundo plano (uvicorn) y luego el menú
 import sys
 import threading
 import time
+from uuid import UUID
 
 # Permitir importar desde src cuando se ejecuta desde la raíz del proyecto
 sys.path.insert(0, ".")
@@ -40,6 +41,7 @@ def mostrar_usuarios():
 
 
 def menu_bancos():
+    bancos_crud = BancoCRUD
     while True:
         print("\n--- Bancos ---")
         print(
@@ -49,12 +51,12 @@ def menu_bancos():
         if op == "0":
             break
         if op == "1":
-            BancoCRUD.obtener_bancos()
+            bancos_crud.obtener_bancos
         elif op == "2":
-            bid = input("ID banco: ").strip()
+            bid = UUID(input("ID banco: "))
             if bid:
                 try:
-                    b = BancoCRUD.obtener_banco(bid)
+                    bancos_crud.obtener_banco(bid)
                     print(f"  {b}")
                 except Exception as e:
                     print(f"  Error: {e}")
@@ -66,7 +68,7 @@ def menu_bancos():
             correo_contacto = input("Correo de contacto: ").strip()
             if nombre and nit and direccion and telefono and correo_contacto:
                 try:
-                    BancoCRUD.crear_banco(
+                    bancos_crud.crear_banco(
                         nombre, nit, direccion, telefono, correo_contacto
                     )
                     print("  Banco creado.")
@@ -92,7 +94,7 @@ def menu_bancos():
                     kwargs["direccion"] = direccion
                 if correo_contacto:
                     kwargs["correo_contacto"] = correo_contacto
-                BancoCRUD.actualizar_banco(uid, **kwargs)
+                bancos_crud.actualizar_banco(uid, **kwargs)
                 print("  Banco actualizado.")
             except Exception as e:
                 print(f"  Error: {e}")
@@ -100,7 +102,7 @@ def menu_bancos():
             uid = input("ID banco a eliminar: ").strip()
             if uid:
                 try:
-                    BancoCRUD.eliminar_banco(uid)
+                    bancos_crud.eliminar_banco(uid)
                     print("  Banco eliminado.")
                 except Exception as e:
                     print(f"  Error: {e}")

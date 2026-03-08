@@ -36,7 +36,7 @@ async def obtener_usuarios(
     """
     try:
         usuario_crud = UsuarioAppCRUD(db)
-        usuarios = usuario_crud.obtener_usuarios(skip=skip, limit=limit)
+        usuarios = usuario_crud.obtener_usuariosApp(skip=skip, limit=limit)
         return usuarios
 
     except Exception as e:

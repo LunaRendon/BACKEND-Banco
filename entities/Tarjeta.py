@@ -3,7 +3,7 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from database.config import Base
-from sqlalchemy import Column, ForeignKey, String, Date
+from sqlalchemy import Column, ForeignKey, String, Date, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -17,6 +17,7 @@ from sqlalchemy.sql import func
     id_cuenta: clave foránea de la entidad cuenta
 """
 
+
 class Tarjeta(Base):
     __tablename__ = "tarjetas"
 
@@ -27,11 +28,11 @@ class Tarjeta(Base):
     tipo_tarjeta = Column(String(20), nullable=False)
     fecha_vencimiento = Column(Date, nullable=False)
     cvv = Column(String(4), nullable=False)
-    estado = Column(String(20), nullable=False)
-    
+    estado = Column(Boolean, default=True)
+
     id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"))
- 
-    cuenta = relationship("Cuenta", back_populates="tarjeta")
+
+    cuenta = relationship("Cuenta", back_populates="tarjetas")
 
     def __repr__(self):
         return f"<Tarjeta(id_tarjeta={self.id_tarjeta}, numero_tarjeta='{self.numero_tarjeta}', tipo_tarjeta='{self.tipo_tarjeta}', fecha_vencimiento={self.fecha_vencimiento},estado='{self.estado}')>"

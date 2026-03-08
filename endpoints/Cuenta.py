@@ -17,13 +17,12 @@ router = APIRouter(prefix="/cuentas", tags=["cuentas"])
 
 @router.get("/{id_cliente}", response_model=List[CuentaResponse])
 async def obtener_cuentas(
-    id_cliente: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
     """
-    Obtener todas las cuentas de un cliente.
+    Obtener todas las cuentas.
 
     Args:
-        id_cliente (UUID): ID del cliente.
         skip (int, opcional): Número de registros a omitir. Default 0.
         limit (int, opcional): Número máximo de registros a retornar. Default 100.
         db (Session): Sesión de base de datos.
@@ -33,7 +32,7 @@ async def obtener_cuentas(
     """
     try:
         cuenta_crud = CuentaCRUD(db)
-        cuentas = cuenta_crud.obtener_cuenta(id_cliente, skip=skip, limit=limit)
+        cuentas = cuenta_crud.obtener_cuentas(skip=skip, limit=limit)
         return cuentas
 
     except Exception as e:
@@ -179,7 +178,6 @@ async def crear_cuenta(cuenta_data: CuentaCreate, db: Session = Depends(get_db))
         cuenta = cuenta_crud.crear_cuenta(
             numero_cuenta=cuenta_data.numero_cuenta,
             tipo_cuenta=cuenta_data.tipo_cuenta,
-            tipo_documento=cuenta_data.tipo_documento,
             saldo=cuenta_data.saldo,
             fecha_apertura=cuenta_data.fecha_apertura,
             estado=cuenta_data.estado,

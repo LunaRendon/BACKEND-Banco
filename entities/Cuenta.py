@@ -41,8 +41,8 @@ class Cuenta(Base):
     )
 
     cliente = relationship("Cliente", back_populates="cuentas")
-    operacion = relationship("Operacion", back_populates="cuentas")
-    tarjeta = relationship("tarjeta", back_populates="cuentas")
+    tarjetas = relationship("Tarjeta", back_populates="cuenta")
+    usuario_app = relationship("Usuario_App", back_populates="cuenta")
 
     usuario_crea = relationship(
         "Usuario", foreign_keys=[id_usuario_crea], overlaps="usuario_edita"

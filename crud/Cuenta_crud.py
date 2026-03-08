@@ -21,7 +21,7 @@ class CuentaCRUD:
 
     def crear_cuenta(
         self,
-        numero_cuenta: int,
+        numero_cuenta: str,
         tipo_cuenta: str,
         saldo: float,
         fecha_apertura: date,
@@ -58,13 +58,13 @@ class CuentaCRUD:
         if not tipo_cuenta or len(tipo_cuenta.strip()) == 0:
             raise ValueError("El tipo de la cuenta del cliente es obligatorio")
 
-        if not saldo or len(saldo.strip()) == 0:
-            raise ValueError("El saldo de la cuenta es obligatoria")
+        if saldo is None:
+            raise ValueError("El saldo de la cuenta es obligatorio")
 
         if not fecha_apertura:
             raise ValueError("La fecha de la sanción es obligatoria")
 
-        if not estado or len(estado.strip()) == 0:
+        if not estado:
             raise ValueError("El estado de la cuenta es obligatorio")
 
         from entities.Cliente import Cliente
@@ -86,11 +86,11 @@ class CuentaCRUD:
             id_usuario_crea = admin.id_usuario
 
         cuenta = Cuenta(
-            numero_cuenta=numero_cuenta.strip(),
+            numero_cuenta=numero_cuenta,
             tipo_cuenta=tipo_cuenta.strip(),
-            saldo=saldo.strip(),
-            fecha_apertura=fecha_apertura.strip(),
-            estado=estado.strip(),
+            saldo=saldo,
+            fecha_apertura=fecha_apertura,
+            estado=estado,
             id_cliente=id_cliente,
             id_usuario_crea=id_usuario_crea,
         )
@@ -117,13 +117,8 @@ class CuentaCRUD:
             .first()
         )
 
-    def obtener_cuentas(
-        self, id_cliente: UUID = None, skip: int = 0, limit: int = 100
-    ) -> List[Cuenta]:
-        query = self.db.query(Cuenta).options(selectinload(Cuenta.cliente))
-        if id_cliente:
-            query = query.filter(Cuenta.id_cliente == id_cliente)
-        return query.offset(skip).limit(limit).all()
+    def obtener_cuentas(self, skip: int = 0, limit: int = 100) -> List[Cuenta]:
+        return self.db.query(Cuenta).offset(skip).limit(limit).all()
 
     def obtener_cuenta_por_numeroCuenta(
         self, numero_cuenta: int, id_cliente: UUID
@@ -253,11 +248,11 @@ class CuentaCRUD:
 
         if "numero_cuenta" in kwargs:
             numero_cuenta = kwargs["numero_cuenta"]
-            if not numero_cuenta or len(numero_cuenta.strip()) == 0:
+            if not numero_cuenta or len(numero_cuenta) == 0:
                 raise ValueError("El numero de la cuenta del cliente es obligatorio")
             if len(numero_cuenta) > 150:
                 raise ValueError("El numero no puede exceder 150 caracteres")
-            kwargs["numero_cuenta"] = numero_cuenta.strip()
+            kwargs["numero_cuenta"] = numero_cuenta
 
         if "tipo_cuenta" in kwargs:
             tipo_cuenta = kwargs["tipo_cuenta"]
@@ -267,21 +262,21 @@ class CuentaCRUD:
 
         if "saldo" in kwargs:
             saldo = kwargs["saldo"]
-            if not saldo or len(saldo.strip()) == 0:
+            if not saldo or len(saldo) == 0:
                 raise ValueError("El saldo es obligatorio")
-            kwargs["saldo"] = saldo.strip()
+            kwargs["saldo"] = saldo
 
         if "fecha_apertura" in kwargs:
             fecha_apertura = kwargs["fecha_apertura"]
-            if not fecha_apertura or len(fecha_apertura.strip()) == 0:
+            if not fecha_apertura or len(fecha_apertura) == 0:
                 raise ValueError("La fecha de apertura es obligatoria")
-            kwargs["fecha_apertura"] = fecha_apertura.strip()
+            kwargs["fecha_apertura"] = fecha_apertura
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
-            if not estado or len(estado.strip()) == 0:
+            if not estado or len(estado) == 0:
                 raise ValueError("El estado es obligatorio")
-            kwargs["estado"] = estado.strip()
+            kwargs["estado"] = estado
 
         if id_usuario_edita is None:
             from entities.Usuario import Usuario
@@ -321,7 +316,7 @@ class CuentaCRUD:
             ValueError: Si el estado es inválido.
         """
 
-        if not estado or len(estado.strip()) == 0:
+        if not estado or len(estado) == 0:
             raise ValueError("El estado es obligatorio")
         if len(estado) > 50:
             raise ValueError("El estado no puede exceder 50 caracteres")

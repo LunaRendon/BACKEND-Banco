@@ -160,7 +160,7 @@ class ClienteCRUD:
         return (
             self.db.query(Cliente)
             .filter(
-                Cliente.num_documento == num_documento,
+                Cliente.num_documento == str(num_documento),
                 Cliente.id_banco == id_banco,
             )
             .all()

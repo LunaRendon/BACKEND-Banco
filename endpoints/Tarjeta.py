@@ -157,13 +157,13 @@ async def obtener_tarjetas_por_tipo(
 
 @router.get("/{id_cuenta}/estado/{estado}", response_model=List[TarjetaResponse])
 async def obtener_tarjetas_por_estado(
-    estado: str, id_cuenta: UUID, db: Session = Depends(get_db)
+    estado: bool, id_cuenta: UUID, db: Session = Depends(get_db)
 ):
     """
     Buscar tarjetas por estado.
 
     args:
-        estado (str): Estado de la tarjeta.
+        estado (bool): Estado de la tarjeta.
         id_cuenta (UUID): ID de la cuenta a la que pertenecen las tarjetas.
 
         Returns: List[TarjetaResponse]: Lista de tarjetas que coinciden con el estado y la cuenta.
