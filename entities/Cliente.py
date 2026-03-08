@@ -43,9 +43,7 @@ class Cliente(Base):
     )
 
     banco = relationship("Banco", back_populates="clientes")
-    cuenta = relationship("Cuenta", back_populates="clientes")
-    usuario_app = relationship("Usuario_App", back_populates="clientes")
-    usuario = relationship("Usuario", back_populates="clientes")
+    cuentas = relationship("Cuenta", back_populates="cliente")
 
     usuario_crea = relationship(
         "Usuario", foreign_keys=[id_usuario_crea], overlaps="usuario_edita"

@@ -37,7 +37,6 @@ class Banco(Base):
 
     # Relaciones
     clientes = relationship("Cliente", back_populates="banco")
-    cuentas = relationship("Cuenta", back_populates="banco")
 
     def __repr__(self):
         return f"<Banco(id_banco={self.id_banco}, nombre='{self.nombre}', nit='{self.nit}', correo_contacto='{self.correo_contacto}')>"

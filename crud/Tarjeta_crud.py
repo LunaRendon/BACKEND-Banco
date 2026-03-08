@@ -20,7 +20,7 @@ class TarjetaCRUD:
         tipo_tarjeta: str,
         fecha_vencimiento: date,
         cvv: str,
-        estado: str,
+        estado: bool,
         id_cuenta: UUID,
     ) -> Tarjeta:
         """Crea una nueva tarjeta asociada a una cuenta.
@@ -29,7 +29,7 @@ class TarjetaCRUD:
         cuenta exista antes de persistir.
         """
 
-        if not numero_tarjeta or len(numero_tarjeta.strip()) == 0:
+        if not numero_tarjeta or len(numero_tarjeta) == 0:
             raise ValueError("El número de tarjeta es obligatorio")
         if len(numero_tarjeta) > 16:
             raise ValueError("El número de tarjeta no puede exceder 16 caracteres")
@@ -45,8 +45,8 @@ class TarjetaCRUD:
         if len(cvv) > 4:
             raise ValueError("El CVV no puede exceder 4 caracteres")
 
-        if not estado or len(estado.strip()) == 0:
-            raise ValueError("El estado de la tarjeta es obligatorio")
+        if not estado:
+            raise ValueError("El estado de la cuenta es obligatorio")
 
         from entities.Cuenta import Cuenta
 
@@ -55,11 +55,11 @@ class TarjetaCRUD:
             raise ValueError("La cuenta especificada no existe")
 
         tarjeta = Tarjeta(
-            numero_tarjeta=numero_tarjeta.strip(),
+            numero_tarjeta=numero_tarjeta,
             tipo_tarjeta=tipo_tarjeta.strip(),
             fecha_vencimiento=fecha_vencimiento,
-            cvv=cvv.strip(),
-            estado=estado.strip(),
+            cvv=cvv,
+            estado=estado,
             id_cuenta=id_cuenta,
         )
 
@@ -113,7 +113,7 @@ class TarjetaCRUD:
         )
 
     def obtener_tarjetas_por_estado(
-        self, estado: str, id_cuenta: UUID
+        self, estado: bool, id_cuenta: UUID
     ) -> List[Tarjeta]:
         return (
             self.db.query(Tarjeta)
@@ -135,7 +135,7 @@ class TarjetaCRUD:
 
         if "numero_tarjeta" in kwargs:
             numero = kwargs["numero_tarjeta"]
-            if not numero or len(numero.strip()) == 0:
+            if not numero or len(numero) == 0:
                 raise ValueError("El número de tarjeta es obligatorio")
             if len(numero) > 16:
                 raise ValueError("El número de tarjeta no puede exceder 16 caracteres")
@@ -155,17 +155,17 @@ class TarjetaCRUD:
 
         if "cvv" in kwargs:
             cvv_val = kwargs["cvv"]
-            if not cvv_val or len(cvv_val.strip()) == 0:
+            if not cvv_val or len(cvv_val) == 0:
                 raise ValueError("El CVV es obligatorio")
             if len(cvv_val) > 4:
                 raise ValueError("El CVV no puede exceder 4 caracteres")
             kwargs["cvv"] = cvv_val.strip()
 
         if "estado" in kwargs:
-            estado_val = kwargs["estado"]
-            if not estado_val or len(estado_val.strip()) == 0:
+            estado = kwargs["estado"]
+            if not estado or len(estado) == 0:
                 raise ValueError("El estado es obligatorio")
-            kwargs["estado"] = estado_val.strip()
+            kwargs["estado"] = estado
 
         for key, value in kwargs.items():
             if hasattr(tarjeta, key):
@@ -178,7 +178,7 @@ class TarjetaCRUD:
     def actualizar_estado(
         self, id_tarjeta: UUID, estado: str, id_cuenta: UUID
     ) -> Optional[Tarjeta]:
-        if not estado or len(estado.strip()) == 0:
+        if not estado or len(estado) == 0:
             raise ValueError("El estado es obligatorio")
         if len(estado) > 20:
             raise ValueError("El estado no puede exceder 20 caracteres")

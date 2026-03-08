@@ -3,7 +3,7 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from database.config import Base
-from sqlalchemy import Column,ForeignKey, String, DateTime
+from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -16,6 +16,7 @@ from sqlalchemy.sql import func
     id_cuenta: clave foránea de la entidad cuenta
 """
 
+
 class Usuario_App(Base):
     __tablename__ = "usuarios_app"
 
@@ -24,12 +25,14 @@ class Usuario_App(Base):
     )
     username = Column(String(50), unique=True, nullable=False)
     contraseña_hash = Column(String(255), nullable=False)
-    fecha_registro = Column(DateTime(timezone=True),nullable=False,server_default=func.now())
-    estado = Column(String(20), nullable=False)
+    fecha_registro = Column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    estado = Column(Boolean, default=False, nullable=True)
 
-    id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"))
- 
-    cuentas = relationship("Cuenta", back_populates="usuario_app")
+    id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), unique=True)
+
+    cuenta = relationship("Cuenta", back_populates="usuario_app")
 
     def __repr__(self):
         return f"<Usuario_App(id_usuario={self.id_usuario}, username='{self.username}', fecha_registro={self.fecha_registro},estado='{self.estado}')>"

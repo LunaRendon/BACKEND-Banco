@@ -13,9 +13,9 @@ from pydantic import BaseModel, EmailStr, Field
 class CuentaBase(BaseModel):
     numero_cuenta: str
     tipo_cuenta: str
-    saldo: str
+    saldo: float
     fecha_apertura: date
-    estado: str
+    estado: bool
     id_cliente: UUID
 
 
@@ -26,9 +26,9 @@ class CuentaCreate(CuentaBase):
 class CuentaUpdate(BaseModel):
     numero_cuenta: Optional[str] = None
     tipo_cuenta: Optional[str] = None
-    saldo: Optional[str] = None
+    saldo: Optional[float] = None
     fecha_apertura: Optional[datetime] = None
-    estado: Optional[str] = None
+    estado: Optional[bool] = None
     id_cliente: Optional[UUID] = None
 
 

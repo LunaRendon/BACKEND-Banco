@@ -6,10 +6,11 @@ from datetime import date, datetime
 """ -------------------------------------------
  Usuario_App
  -------------------------------------------"""
- 
+
+
 class UsuarioAppBase(BaseModel):
     username: str
-    estado: str
+    estado: bool
     id_cuenta: UUID
 
 
@@ -20,7 +21,7 @@ class UsuarioAppCreate(UsuarioAppBase):
 class UsuarioAppUpdate(BaseModel):
     username: Optional[str] = None
     contraseña: Optional[str] = None
-    estado: Optional[str] = None
+    estado: Optional[bool] = None
     id_cuenta: Optional[UUID] = None
 
 
@@ -30,4 +31,3 @@ class UsuarioAppResponse(UsuarioAppBase):
 
     class Config:
         from_attributes = True
-    
