@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from entities.Operacion import Operacion
 from entities.Cuenta import Cuenta
+from decimal import Decimal
 
 
 class OperacionCRUD:
@@ -17,12 +18,12 @@ class OperacionCRUD:
         id_cuenta_origen: UUID = None,
         id_cuenta_destino: UUID = None,
     ) -> Operacion:
-
+        monto = Decimal(monto)
         if not tipo_operacion or len(tipo_operacion.strip()) == 0:
             raise ValueError("El tipo de operación es obligatorio")
 
-        if monto is None or monto <= 0:
-            raise ValueError("El monto debe ser mayor a 0")
+        if monto <= 0:
+            raise ValueError("El monto debe ser mayor que cero")
 
         cuenta_origen = None
         cuenta_destino = None

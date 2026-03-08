@@ -326,25 +326,20 @@ def crear_operacion_menu():
     print("\n--- Crear operación ---")
     print("1. Depósito \n 2. Retiro \n 3. Transferencia")
     tipo = input("Seleccione tipo: ").strip()
-    monto = input("Monto: ").strip()
-    id_usuario = input("ID usuario creador: ").strip()
+    monto = float(input("Monto: "))
     if tipo == "1":
         id_cuenta_destino = input("ID cuenta destino: ").strip()
 
-        operacion_crud.crear_operacion(
-            "deposito", monto, None, id_cuenta_destino, id_usuario
-        )
+        operacion_crud.crear_operacion("deposito", monto, None, id_cuenta_destino)
     elif tipo == "2":
         id_cuenta_origen = input("ID cuenta origen: ").strip()
-        operacion_crud.crear_operacion(
-            "retiro", monto, id_cuenta_origen, None, id_usuario
-        )
+        operacion_crud.crear_operacion("retiro", monto, id_cuenta_origen, None)
     elif tipo == "3":
         id_cuenta_origen = input("ID cuenta origen: ").strip()
         id_cuenta_destino = input("ID cuenta destino: ").strip()
 
         operacion_crud.crear_operacion(
-            "transferencia", monto, id_cuenta_origen, id_cuenta_destino, id_usuario
+            "transferencia", monto, id_cuenta_origen, id_cuenta_destino
         )
     else:
         print("Tipo de operación no válido.")
