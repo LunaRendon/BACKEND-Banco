@@ -6,33 +6,48 @@ Aplicación FastAPI. Ejecutar con:
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from database.config import create_tables
 from endpoints import Cliente, Cuenta, Banco, Operacion, Tarjeta, Usuario, Uusuario_App
+from core.exceptions import AppException
+from core.error_handlers import (
+    app_exception_handler,
+    http_exception_handler,
+    validation_exception_handler,
+    generic_exception_handler,
+)
 
 # Importar modelos para que Base.metadata los conozca
-import entities.Banco  # noqa: F401 - registrar modelo
-import entities.Cliente  # noqa: F401 - registrar modelo
-import entities.Cuenta  # noqa: F401 - registrar modelo
-import entities.Operacion  # noqa: F401 - registrar modelo
-import entities.Tarjeta  # noqa: F401 - registrar modelo
-import entities.Usuario  # noqa: F401 - registrar modelo
-import entities.Usuario_App  # noqa: F401 - registrar modelo
+import entities.Banco  # noqa: F401
+import entities.Cliente  # noqa: F401
+import entities.Cuenta  # noqa: F401
+import entities.Operacion  # noqa: F401
+import entities.Tarjeta  # noqa: F401
+import entities.Usuario  # noqa: F401
+import entities.Usuario_App  # noqa: F401
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
     yield
-    # shutdown si hiciera falta
 
 
 app = FastAPI(
-    title="API completa",
+    title="API Banco",
     description="API con FastAPI, SQLAlchemy y PostgreSQL",
     lifespan=lifespan,
 )
 
+"Registrar handlers globales de core "
+app.add_exception_handler(AppException, app_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
+
+"Routers de endpoints"
 app.include_router(Cliente.router)
 app.include_router(Cuenta.router)
 app.include_router(Banco.router)
