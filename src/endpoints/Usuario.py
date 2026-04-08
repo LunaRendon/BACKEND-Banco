@@ -8,13 +8,13 @@ from uuid import UUID
 from src.crud.Usuario_crud import UsuarioCRUD
 from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas import (
+from src.schemas import (
     CambioContraseña,
     UsuarioCreate,
     UsuarioResponse,
     UsuarioUpdate,
 )
-from schemas.schemas import RespuestaAPI
+from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
