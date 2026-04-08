@@ -8,12 +8,12 @@ from uuid import UUID
 from src.crud.Operacion_crud import OperacionCRUD
 from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas.Operacion_schema import (
+from src.schemas.Operacion_schema import (
     OperacionCreate,
     OperacionResponse,
     OperacionUpdate,
 )
-from schemas.schemas import RespuestaAPI
+from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/operaciones", tags=["operaciones"])
