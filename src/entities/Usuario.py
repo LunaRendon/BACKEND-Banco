@@ -2,7 +2,7 @@
 
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
-from database.config import Base
+from src.database.config import Base
 from sqlalchemy import Boolean, Column, ForeignKey, DateTime, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
