@@ -1,8 +1,8 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session
-from entities.Operacion import Operacion
-from entities.Cuenta import Cuenta
+from src.entities.Operacion import Operacion
+from src.entities.Cuenta import Cuenta
 from decimal import Decimal
 
 

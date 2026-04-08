@@ -2,8 +2,8 @@ import re
 from typing import List, Optional, Tuple
 from uuid import UUID
 
-from auth.security import PasswordManager
-from entities.Usuario import Usuario
+from src.auth.security import PasswordManager
+from src.entities.Usuario import Usuario
 from sqlalchemy.orm import Session
 
 

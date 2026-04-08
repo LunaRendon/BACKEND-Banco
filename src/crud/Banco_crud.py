@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session
-from entities.Banco import Banco
+from src.entities.Banco import Banco
 
 
 class BancoCRUD:

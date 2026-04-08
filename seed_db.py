@@ -20,7 +20,7 @@ from sqlalchemy.exc import OperationalError
 from src.database.config import SessionLocal
 from src.entities.Banco import Banco
 from src.entities.Usuario import Usuario
-from src.auth.security import hash_password
+from src.auth.security import PasswordManager
 
 
 """
@@ -48,6 +48,7 @@ USUARIO_INICIAL = {
 Crea el banco si no existe en la base de datos.
 """
 
+
 def seed_banco(db):
     banco = db.query(Banco).filter(Banco.nit == BANCO_INICIAL["nit"]).first()
     if banco:
@@ -66,16 +67,19 @@ def seed_banco(db):
 Crea el usuario administrador si no existe.
 """
 
+
 def get_or_create_admin(db):
-    admin = db.query(Usuario).filter(
-        Usuario.nombre_usuario == USUARIO_INICIAL["nombre_usuario"]
-    ).first()
+    admin = (
+        db.query(Usuario)
+        .filter(Usuario.nombre_usuario == USUARIO_INICIAL["nombre_usuario"])
+        .first()
+    )
 
     if admin:
         return admin
 
     u = USUARIO_INICIAL.copy()
-    u["contraseña_hash"] = hash_password(u.pop("contraseña"))
+    u["contraseña_hash"] = PasswordManager.hash_password(u.pop("contraseña"))
 
     admin = Usuario(**u)
     db.add(admin)
@@ -89,6 +93,7 @@ def get_or_create_admin(db):
 """
 Función principal que ejecuta el proceso de seed.
 """
+
 
 def main():
     try:

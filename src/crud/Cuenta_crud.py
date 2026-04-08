@@ -1,6 +1,6 @@
 from typing import List, Optional
 from uuid import UUID
-from entities.Cuenta import Cuenta
+from src.entities.Cuenta import Cuenta
 from sqlalchemy.orm import Session, selectinload
 from datetime import date
 

@@ -5,8 +5,8 @@ Endpoint de Usuarios - Endpoints para gestión de usuarios
 from typing import List
 from uuid import UUID
 
-from crud.Usuario_crud import UsuarioCRUD
-from database.config import get_db
+from src.crud.Usuario_crud import UsuarioCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from schemas import (
     CambioContraseña,
