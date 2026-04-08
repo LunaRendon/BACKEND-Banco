@@ -21,7 +21,7 @@ import entities.Operacion  # noqa: F401 - registrar modelo
 import entities.Tarjeta  # noqa: F401 - registrar modelo
 import entities.Usuario  # noqa: F401 - registrar modelo
 import entities.Usuario_App  # noqa: F401 - registrar modelo
-from database.config import create_tables
+from src.database.config import create_tables
 
 if __name__ == "__main__":
     try:

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session, selectinload
-from entities.Usuario_App import Usuario_App
+from src.entities.Usuario_App import Usuario_App
 
 
 class UsuarioAppCRUD:

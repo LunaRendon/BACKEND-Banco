@@ -5,11 +5,11 @@ Endpoint de Cliente - Endpoints para gestión de cliente
 from typing import List
 from uuid import UUID
 
-from crud.Cliente_crud import ClienteCRUD
-from database.config import get_db
+from src.crud.Cliente_crud import ClienteCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas import ClienteCreate, ClienteResponse, ClienteUpdate
-from schemas.schemas import RespuestaAPI
+from src.schemas import ClienteCreate, ClienteResponse, ClienteUpdate
+from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/clientes", tags=["clientes"])

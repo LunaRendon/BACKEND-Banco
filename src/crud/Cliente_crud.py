@@ -1,6 +1,6 @@
 from typing import List, Optional
 from uuid import UUID
-from entities.Cliente import Cliente
+from src.entities.Cliente import Cliente
 from sqlalchemy.orm import Session, selectinload
 
 

@@ -53,6 +53,7 @@ USUARIO_INICIAL = {
 Crea el banco si no existe en la base de datos.
 """
 
+
 def seed_banco(db):
     banco = db.query(Banco).filter(Banco.nit == BANCO_INICIAL["nit"]).first()
     if banco:
@@ -71,10 +72,13 @@ def seed_banco(db):
 Crea el usuario administrador si no existe.
 """
 
+
 def get_or_create_admin(db):
-    admin = db.query(Usuario).filter(
-        Usuario.nombre_usuario == USUARIO_INICIAL["nombre_usuario"]
-    ).first()
+    admin = (
+        db.query(Usuario)
+        .filter(Usuario.nombre_usuario == USUARIO_INICIAL["nombre_usuario"])
+        .first()
+    )
 
     if admin:
         return admin
@@ -94,6 +98,7 @@ def get_or_create_admin(db):
 """
 Función principal que ejecuta el proceso de seed.
 """
+
 
 def main():
     try:

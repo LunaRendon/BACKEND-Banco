@@ -5,11 +5,11 @@ Endpoint de Cuenta - Endpoints para gestión de cuentas
 from typing import List
 from uuid import UUID
 
-from crud.Cuenta_crud import CuentaCRUD
-from database.config import get_db
+from src.crud.Cuenta_crud import CuentaCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from schemas import CuentaCreate, CuentaResponse, CuentaUpdate
-from schemas.schemas import RespuestaAPI
+from src.schemas import CuentaCreate, CuentaResponse, CuentaUpdate
+from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/cuentas", tags=["cuentas"])
