@@ -20,7 +20,12 @@ from sqlalchemy.exc import OperationalError
 from src.database.config import SessionLocal
 from src.entities.Banco import Banco
 from src.entities.Usuario import Usuario
-from src.auth.security import hash_password
+from src.entities.Cliente import Cliente
+from src.entities.Cuenta import Cuenta
+from src.entities.Operacion import Operacion
+from src.entities.Tarjeta import Tarjeta
+from src.entities.Usuario_App import Usuario_App
+from src.auth.security import PasswordManager
 
 
 """
@@ -75,7 +80,7 @@ def get_or_create_admin(db):
         return admin
 
     u = USUARIO_INICIAL.copy()
-    u["contraseña_hash"] = hash_password(u.pop("contraseña"))
+    u["contraseña_hash"] = PasswordManager.hash_password(u.pop("contraseña"))
 
     admin = Usuario(**u)
     db.add(admin)
