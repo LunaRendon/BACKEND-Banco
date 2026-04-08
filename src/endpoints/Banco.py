@@ -5,8 +5,8 @@ Endpoint de Banco
 from typing import List
 from uuid import UUID
 
-from crud.Banco_crud import BancoCRUD
-from database.config import get_db
+from src.crud.Banco_crud import BancoCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.Banco_schema import BancoCreate, BancoResponse, BancoUpdate
 from schemas.schemas import RespuestaAPI

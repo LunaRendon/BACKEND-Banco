@@ -5,8 +5,8 @@ Endpoint de Tarjeta - Endpoints para gestión de tarjetas
 from typing import List
 from uuid import UUID
 
-from crud.Tarjeta_crud import TarjetaCRUD
-from database.config import get_db
+from src.crud.Tarjeta_crud import TarjetaCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.Tarjeta_schema import TarjetaCreate, TarjetaResponse, TarjetaUpdate
 from schemas.schemas import RespuestaAPI

@@ -5,8 +5,8 @@ Endpoint de Usuario_App - Endpoints para gestión de usuarios de la app
 from typing import List
 from uuid import UUID
 
-from crud.Usuario_App_crud import UsuarioAppCRUD
-from database.config import get_db
+from src.crud.Usuario_App_crud import UsuarioAppCRUD
+from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.Usuario_App_schema import (
     UsuarioAppCreate,

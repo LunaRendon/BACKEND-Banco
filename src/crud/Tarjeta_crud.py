@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import date
 from sqlalchemy.orm import Session, selectinload
-from entities.Tarjeta import Tarjeta
+from src.entities.Tarjeta import Tarjeta
 
 
 class TarjetaCRUD:
