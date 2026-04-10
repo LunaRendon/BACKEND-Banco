@@ -15,9 +15,14 @@ from src.schemas import (
     UsuarioUpdate,
 )
 from src.schemas.schemas import RespuestaAPI
+from src.core.auth import get_current_user
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/usuarios", tags=["usuarios"])
+router = APIRouter(
+    prefix="/usuarios",
+    tags=["usuarios"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("/", response_model=List[UsuarioResponse])

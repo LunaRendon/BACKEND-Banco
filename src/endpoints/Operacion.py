@@ -14,9 +14,14 @@ from src.schemas.Operacion_schema import (
     OperacionUpdate,
 )
 from src.schemas.schemas import RespuestaAPI
+from src.core.auth import get_current_user
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/operaciones", tags=["operaciones"])
+router = APIRouter(
+    prefix="/operaciones",
+    tags=["operaciones"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("", response_model=List[OperacionResponse])

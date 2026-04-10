@@ -10,9 +10,10 @@ from sqlalchemy.sql import func
 """ATRIBUTOS DE LA ENTIDAD:
     id_usuario: uuid, clave primaria
     username: nombre de usuario único para acceso a la app
-    contraseña: contraseña cifrada del usuario
+    password_hash: contraseña cifrada del usuario
     fecha_registro: fecha y hora en la que se registró el usuario
     estado: estado del usuario (activo, inactivo, bloqueado)
+    rol: rol del usuario (cliente, admin_app)
     id_cuenta: clave foránea de la entidad cuenta
 """
 
@@ -29,10 +30,11 @@ class Usuario_App(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     estado = Column(Boolean, default=False, nullable=True)
+    rol = Column(String(20), nullable=False, default="cliente")
 
     id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), unique=True)
 
     cuenta = relationship("Cuenta", back_populates="usuario_app")
 
     def __repr__(self):
-        return f"<Usuario_App(id_usuario={self.id_usuario}, username='{self.username}', fecha_registro={self.fecha_registro},estado='{self.estado}')>"
+        return f"<Usuario_App(id_usuario={self.id_usuario}, username='{self.username}', rol='{self.rol}', estado='{self.estado}')>"

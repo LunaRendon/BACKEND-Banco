@@ -8,6 +8,7 @@ from uuid import UUID
 from src.crud.Usuario_App_crud import UsuarioAppCRUD
 from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
+from src.core.auth import get_current_user
 from src.schemas.Usuario_App_schema import (
     UsuarioAppCreate,
     UsuarioAppResponse,
@@ -19,7 +20,11 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/usuarios_app", tags=["usuarios_app"])
 
 
-@router.get("/", response_model=List[UsuarioAppResponse])
+@router.get(
+    "/",
+    response_model=List[UsuarioAppResponse],
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_usuarios(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
@@ -38,7 +43,6 @@ async def obtener_usuarios(
         usuario_crud = UsuarioAppCRUD(db)
         usuarios = usuario_crud.obtener_usuariosApp(skip=skip, limit=limit)
         return usuarios
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -46,7 +50,11 @@ async def obtener_usuarios(
         )
 
 
-@router.get("/username/{username}", response_model=UsuarioAppResponse)
+@router.get(
+    "/username/{username}",
+    response_model=UsuarioAppResponse,
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_usuario_por_username(username: str, db: Session = Depends(get_db)):
     """
     Buscar usuario por username.
@@ -61,15 +69,12 @@ async def obtener_usuario_por_username(username: str, db: Session = Depends(get_
     try:
         usuario_crud = UsuarioAppCRUD(db)
         usuario = usuario_crud.obtener_usuario_por_username(username)
-
         if not usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no encontrado",
             )
-
         return usuario
-
     except HTTPException:
         raise
     except Exception as e:
@@ -79,7 +84,11 @@ async def obtener_usuario_por_username(username: str, db: Session = Depends(get_
         )
 
 
-@router.get("/estado/{estado}", response_model=List[UsuarioAppResponse])
+@router.get(
+    "/estado/{estado}",
+    response_model=List[UsuarioAppResponse],
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_usuarios_por_estado(estado: str, db: Session = Depends(get_db)):
     """
     Buscar usuarios por estado.
@@ -95,7 +104,6 @@ async def obtener_usuarios_por_estado(estado: str, db: Session = Depends(get_db)
         usuario_crud = UsuarioAppCRUD(db)
         usuarios = usuario_crud.obtener_usuarios_por_estado(estado)
         return usuarios
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -103,7 +111,11 @@ async def obtener_usuarios_por_estado(estado: str, db: Session = Depends(get_db)
         )
 
 
-@router.get("/{id_usuario}", response_model=UsuarioAppResponse)
+@router.get(
+    "/{id_usuario}",
+    response_model=UsuarioAppResponse,
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
     """
     Obtener un usuario específico por su ID.
@@ -118,15 +130,12 @@ async def obtener_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
     try:
         usuario_crud = UsuarioAppCRUD(db)
         usuario = usuario_crud.obtener_usuario(id_usuario)
-
         if not usuario:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no encontrado",
             )
-
         return usuario
-
     except HTTPException:
         raise
     except Exception as e:
@@ -142,6 +151,7 @@ async def obtener_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
 async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(get_db)):
     """
     Crear un nuevo usuario de la aplicación.
+    Este endpoint es público, no requiere autenticación.
 
     Args:
         usuario_data (UsuarioAppCreate): Datos del usuario a registrar.
@@ -152,19 +162,16 @@ async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(ge
     """
     try:
         usuario_crud = UsuarioAppCRUD(db)
-
         usuario = usuario_crud.crear_usuario(
             username=usuario_data.username,
-            contraseña_hash=usuario_data.contraseña,
+            contraseña=usuario_data.contraseña,
             estado=usuario_data.estado,
+            rol=usuario_data.rol,
             id_cuenta=usuario_data.id_cuenta,
         )
-
         return usuario
-
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -172,7 +179,11 @@ async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(ge
         )
 
 
-@router.put("/{id_usuario}", response_model=UsuarioAppResponse)
+@router.put(
+    "/{id_usuario}",
+    response_model=UsuarioAppResponse,
+    dependencies=[Depends(get_current_user)],
+)
 async def actualizar_usuario(
     id_usuario: UUID,
     usuario_data: UsuarioAppUpdate,
@@ -180,6 +191,7 @@ async def actualizar_usuario(
 ):
     """
     Actualizar la información de un usuario existente.
+    Requiere autenticación JWT.
 
     Args:
         id_usuario (UUID): ID del usuario.
@@ -191,31 +203,23 @@ async def actualizar_usuario(
     """
     try:
         usuario_crud = UsuarioAppCRUD(db)
-
         usuario_existente = usuario_crud.obtener_usuario(id_usuario)
-
         if not usuario_existente:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no encontrado",
             )
-
         campos_actualizacion = {
             k: v for k, v in usuario_data.dict().items() if v is not None
         }
-
         usuario_actualizado = usuario_crud.actualizar_usuario(
             id_usuario, **campos_actualizacion
         )
-
         return usuario_actualizado
-
     except HTTPException:
         raise
-
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -223,10 +227,15 @@ async def actualizar_usuario(
         )
 
 
-@router.delete("/{id_usuario}", response_model=RespuestaAPI)
+@router.delete(
+    "/{id_usuario}",
+    response_model=RespuestaAPI,
+    dependencies=[Depends(get_current_user)],
+)
 async def eliminar_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
     """
     Eliminar un usuario de la aplicación.
+    Requiere autenticación JWT.
 
     Args:
         id_usuario (UUID): ID del usuario.
@@ -237,17 +246,13 @@ async def eliminar_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
     """
     try:
         usuario_crud = UsuarioAppCRUD(db)
-
         usuario_existente = usuario_crud.obtener_usuario(id_usuario)
-
         if not usuario_existente:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Usuario no encontrado",
             )
-
         eliminado = usuario_crud.eliminar_usuario(id_usuario)
-
         if eliminado:
             return RespuestaAPI(
                 mensaje="Usuario eliminado exitosamente",
@@ -258,10 +263,8 @@ async def eliminar_usuario(id_usuario: UUID, db: Session = Depends(get_db)):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error al eliminar usuario",
             )
-
     except HTTPException:
         raise
-
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -11,6 +11,7 @@ from datetime import date, datetime
 class UsuarioAppBase(BaseModel):
     username: str
     estado: bool
+    rol: str = "cliente"
     id_cuenta: UUID
 
 
@@ -22,6 +23,7 @@ class UsuarioAppUpdate(BaseModel):
     username: Optional[str] = None
     contraseña: Optional[str] = None
     estado: Optional[bool] = None
+    rol: Optional[str] = None
     id_cuenta: Optional[UUID] = None
 
 
