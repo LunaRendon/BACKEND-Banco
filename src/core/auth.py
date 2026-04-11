@@ -83,7 +83,7 @@ async def get_current_user(
     user = db.query(Usuario_App).filter(Usuario_App.id_usuario == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
-    if not user.activo:
+    if not user.estado:
         raise HTTPException(status_code=403, detail="Usuario inactivo")
 
     return CurrentUser(

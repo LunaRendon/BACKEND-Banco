@@ -11,7 +11,7 @@ from datetime import datetime
 class UsuarioBase(BaseModel):
     nombre: str
     nombre_usuario: str
-    email: EmailStr
+    email: str
     telefono: Optional[str] = None
     activo: Optional[bool] = True
     es_admin: bool = False
@@ -24,7 +24,7 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioUpdate(BaseModel):
     nombre: Optional[str] = None
     nombre_usuario: Optional[str] = None
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     contraseña: Optional[str] = None
     telefono: Optional[str] = None
     es_admin: Optional[bool] = None
