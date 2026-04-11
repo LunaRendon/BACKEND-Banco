@@ -2,6 +2,7 @@ from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session, selectinload
 from src.entities.Usuario_App import Usuario_App
+from src.utils.security import hash_password
 
 
 class UsuarioAppCRUD:
@@ -16,9 +17,10 @@ class UsuarioAppCRUD:
     def crear_usuario(
         self,
         username: str,
-        contraseña_hash: str,
+        contraseña: str,
         estado: bool,
         id_cuenta: UUID,
+        rol: str = "cliente",
     ) -> Usuario_App:
         """
         Crea un nuevo usuario de la app.
@@ -32,9 +34,9 @@ class UsuarioAppCRUD:
         if len(username) > 50:
             raise ValueError("El username no puede exceder 50 caracteres")
 
-        if not contraseña_hash or len(contraseña_hash.strip()) == 0:
+        if not contraseña or len(contraseña.strip()) == 0:
             raise ValueError("La contraseña es obligatoria")
-        if len(contraseña_hash) > 255:
+        if len(contraseña) > 255:
             raise ValueError("La contraseña no puede exceder 255 caracteres")
 
         if not estado:
@@ -43,7 +45,7 @@ class UsuarioAppCRUD:
         if not id_cuenta:
             raise ValueError("La cuenta es obligatoria")
 
-        from entities.Cuenta import Cuenta
+        from src.entities.Cuenta import Cuenta
 
         cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
 
@@ -52,8 +54,9 @@ class UsuarioAppCRUD:
 
         usuario = Usuario_App(
             username=username.strip(),
-            contraseña_hash=contraseña_hash.strip(),
+            contraseña_hash=hash_password(contraseña),
             estado=estado,
+            rol=rol,
             id_cuenta=id_cuenta,
         )
 
@@ -105,8 +108,8 @@ class UsuarioAppCRUD:
 
             kwargs["username"] = username.strip()
 
-        if "contraseña_hash" in kwargs:
-            password = kwargs["contraseña_hash"]
+        if "contraseña" in kwargs:
+            password = kwargs["contraseña"]
 
             if not password or len(password.strip()) == 0:
                 raise ValueError("La contraseña es obligatoria")
@@ -114,7 +117,7 @@ class UsuarioAppCRUD:
             if len(password) > 255:
                 raise ValueError("La contraseña no puede exceder 255 caracteres")
 
-            kwargs["contraseña_hash"] = password.strip()
+            kwargs["contraseña"] = password.strip()
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
@@ -125,7 +128,7 @@ class UsuarioAppCRUD:
         if "id_cuenta" in kwargs:
             id_cuenta = kwargs["id_cuenta"]
 
-            from entities.Cuenta import Cuenta
+            from src.entities.Cuenta import Cuenta
 
             cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
 

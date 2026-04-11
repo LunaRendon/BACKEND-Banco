@@ -7,12 +7,23 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from database.config import create_tables
-from endpoints import Cliente, Cuenta, Banco, Operacion, Tarjeta, Usuario, Uusuario_App
-from core.exceptions import AppException
-from core.error_handlers import (
+from src.database.config import create_tables
+from src.endpoints import (
+    Cliente,
+    Cuenta,
+    Banco,
+    Operacion,
+    Tarjeta,
+    Usuario,
+    Uusuario_App,
+    login,
+)
+from src.core.config import get_settings
+from src.core.exceptions import AppException
+from src.core.error_handlers import (
     app_exception_handler,
     http_exception_handler,
     validation_exception_handler,
@@ -20,13 +31,13 @@ from core.error_handlers import (
 )
 
 # Importar modelos para que Base.metadata los conozca
-import entities.Banco  # noqa: F401
-import entities.Cliente  # noqa: F401
-import entities.Cuenta  # noqa: F401
-import entities.Operacion  # noqa: F401
-import entities.Tarjeta  # noqa: F401
-import entities.Usuario  # noqa: F401
-import entities.Usuario_App  # noqa: F401
+import src.entities.Banco  # noqa: F401
+import src.entities.Cliente  # noqa: F401
+import src.entities.Cuenta  # noqa: F401
+import src.entities.Operacion  # noqa: F401
+import src.entities.Tarjeta  # noqa: F401
+import src.entities.Usuario  # noqa: F401
+import src.entities.Usuario_App  # noqa: F401
 
 
 @asynccontextmanager
@@ -39,6 +50,15 @@ app = FastAPI(
     title="API Banco",
     description="API con FastAPI, SQLAlchemy y PostgreSQL",
     lifespan=lifespan,
+)
+
+_settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_settings.cors_origins_list(),
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 "Registrar handlers globales de core "
@@ -55,6 +75,7 @@ app.include_router(Operacion.router)
 app.include_router(Tarjeta.router)
 app.include_router(Uusuario_App.router)
 app.include_router(Usuario.router)
+app.include_router(login.router)
 
 
 @app.get("/")

@@ -10,9 +10,14 @@ from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from src.schemas.Banco_schema import BancoCreate, BancoResponse, BancoUpdate
 from src.schemas.schemas import RespuestaAPI
+from src.core.auth import get_current_user
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/bancos", tags=["bancos"])
+router = APIRouter(
+    prefix="/bancos",
+    tags=["bancos"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("", response_model=List[BancoResponse])

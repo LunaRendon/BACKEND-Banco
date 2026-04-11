@@ -14,13 +14,13 @@ load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 from sqlalchemy.exc import OperationalError
 
-import entities.Banco  # noqa: F401 - registrar modelo
-import entities.Cliente  # noqa: F401 - registrar modelo
-import entities.Cuenta  # noqa: F401 - registrar modelo
-import entities.Operacion  # noqa: F401 - registrar modelo
-import entities.Tarjeta  # noqa: F401 - registrar modelo
-import entities.Usuario  # noqa: F401 - registrar modelo
-import entities.Usuario_App  # noqa: F401 - registrar modelo
+import src.entities.Banco  # noqa: F401 - registrar modelo
+import src.entities.Cliente  # noqa: F401 - registrar modelo
+import src.entities.Cuenta  # noqa: F401 - registrar modelo
+import src.entities.Operacion  # noqa: F401 - registrar modelo
+import src.entities.Tarjeta  # noqa: F401 - registrar modelo
+import src.entities.Usuario  # noqa: F401 - registrar modelo
+import src.entities.Usuario_App  # noqa: F401 - registrar modelo
 from src.database.config import create_tables
 
 if __name__ == "__main__":

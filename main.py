@@ -7,19 +7,19 @@ import sys
 import threading
 import time
 from uuid import UUID
-from database.config import SessionLocal
+from src.database.config import SessionLocal
 from datetime import date
 
 # Permitir importar desde src cuando se ejecuta desde la raíz del proyecto
 sys.path.insert(0, ".")
 
-from crud.Usuario_crud import UsuarioCRUD
-from crud.Banco_crud import BancoCRUD
-from crud.Cliente_crud import ClienteCRUD
-from crud.Cuenta_crud import CuentaCRUD
-from crud.Operacion_crud import OperacionCRUD
-from crud.Tarjeta_crud import TarjetaCRUD
-from crud.Usuario_App_crud import UsuarioAppCRUD
+from src.crud.Usuario_crud import UsuarioCRUD
+from src.crud.Banco_crud import BancoCRUD
+from src.crud.Cliente_crud import ClienteCRUD
+from src.crud.Cuenta_crud import CuentaCRUD
+from src.crud.Operacion_crud import OperacionCRUD
+from src.crud.Tarjeta_crud import TarjetaCRUD
+from src.crud.Usuario_App_crud import UsuarioAppCRUD
 
 
 def mostrar_usuarios():
@@ -577,7 +577,7 @@ def _iniciar_api():
     """Ejecuta uvicorn en un hilo en segundo plano."""
     import uvicorn
 
-    uvicorn.run("utils.app:app", host="127.0.0.1", port=8000, log_level="warning")
+    uvicorn.run("src.utils.app:app", host="127.0.0.1", port=8000, log_level="warning")
 
 
 def main():

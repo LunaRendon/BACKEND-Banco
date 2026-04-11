@@ -25,7 +25,7 @@ from src.entities.Cuenta import Cuenta
 from src.entities.Operacion import Operacion
 from src.entities.Tarjeta import Tarjeta
 from src.entities.Usuario_App import Usuario_App
-from src.auth.security import PasswordManager
+from src.utils.security import PasswordManager
 
 
 """

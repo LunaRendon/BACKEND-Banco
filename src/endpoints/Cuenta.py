@@ -9,10 +9,14 @@ from src.crud.Cuenta_crud import CuentaCRUD
 from src.database.config import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from src.schemas import CuentaCreate, CuentaResponse, CuentaUpdate
+from src.core.auth import get_current_user
 from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/cuentas", tags=["cuentas"])
+router = APIRouter(
+    prefix="/cuentas",
+    tags=["cuentas"],
+)
 
 
 @router.get("/{id_cliente}", response_model=List[CuentaResponse])
@@ -42,7 +46,11 @@ async def obtener_cuentas(
         )
 
 
-@router.get("/{id_cliente}/cuenta/{id_cuenta}", response_model=CuentaResponse)
+@router.get(
+    "/{id_cliente}/cuenta/{id_cuenta}",
+    response_model=CuentaResponse,
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_cuenta(
     id_cliente: UUID, id_cuenta: UUID, db: Session = Depends(get_db)
 ):
@@ -76,7 +84,9 @@ async def obtener_cuenta(
 
 
 @router.get(
-    "/{id_cliente}/tipo de cuenta/{tipo_cuenta}", response_model=List[CuentaResponse]
+    "/{id_cliente}/tipo de cuenta/{tipo_cuenta}",
+    response_model=List[CuentaResponse],
+    dependencies=[Depends(get_current_user)],
 )
 async def obtener_cuentas_por_tipodCuenta(
     tipo_cuenta: str, id_cliente: UUID, db: Session = Depends(get_db)
@@ -104,7 +114,11 @@ async def obtener_cuentas_por_tipodCuenta(
         )
 
 
-@router.get("/{id_cliente}/Estado/{estado}", response_model=List[CuentaResponse])
+@router.get(
+    "/{id_cliente}/Estado/{estado}",
+    response_model=List[CuentaResponse],
+    dependencies=[Depends(get_current_user)],
+)
 async def obtener_cuentas_por_estado(
     estado: str, id_cliente: UUID, db: Session = Depends(get_db)
 ):
@@ -134,6 +148,7 @@ async def obtener_cuentas_por_estado(
 @router.get(
     "/{id_cliente}/Numero documento/{numero_cuenta}",
     response_model=List[CuentaResponse],
+    dependencies=[Depends(get_current_user)],
 )
 async def obtener_cuentas_por_numerodCuenta(
     numero_cuenta: int, id_cliente: UUID, db: Session = Depends(get_db)
@@ -194,7 +209,11 @@ async def crear_cuenta(cuenta_data: CuentaCreate, db: Session = Depends(get_db))
         )
 
 
-@router.put("/{id_cliente}/Cuenta/{id_cuenta}", response_model=CuentaResponse)
+@router.put(
+    "/{id_cliente}/Cuenta/{id_cuenta}",
+    response_model=CuentaResponse,
+    dependencies=[Depends(get_current_user)],
+)
 async def actualizar_cuenta(
     id_cliente: UUID,
     id_cuenta: UUID,
@@ -242,7 +261,11 @@ async def actualizar_cuenta(
         )
 
 
-@router.delete("/{id_cliente}/Cuenta/{id_cuenta}", response_model=RespuestaAPI)
+@router.delete(
+    "/{id_cliente}/Cuenta/{id_cuenta}",
+    response_model=RespuestaAPI,
+    dependencies=[Depends(get_current_user)],
+)
 async def eliminar_cuenta(
     id_cuenta: UUID, id_cliente: UUID, db: Session = Depends(get_db)
 ):
