@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 router = APIRouter(
     prefix="/clientes",
     tags=["clientes"],
+    dependencies=[Depends(get_current_user)],
 )
 
 
