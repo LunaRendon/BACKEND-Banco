@@ -42,15 +42,20 @@ class UsuarioAppCRUD:
         if not estado:
             raise ValueError("El estado es obligatorio")
 
-        if not id_cuenta:
-            raise ValueError("La cuenta es obligatoria")
+        if id_cuenta:
+            from src.entities.Cuenta import Cuenta
 
-        from src.entities.Cuenta import Cuenta
-
-        cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
-
+            cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
         if not cuenta:
             raise ValueError("La cuenta especificada no existe")
+
+        usuario_existente = (
+            self.db.query(Usuario_App)
+            .filter(Usuario_App.id_cuenta == id_cuenta)
+            .first()
+        )
+        if usuario_existente:
+            raise ValueError("Esta cuenta bancaria ya tiene un usuario registrado")
 
         usuario = Usuario_App(
             username=username.strip(),
@@ -117,7 +122,8 @@ class UsuarioAppCRUD:
             if len(password) > 255:
                 raise ValueError("La contraseña no puede exceder 255 caracteres")
 
-            kwargs["contraseña"] = password.strip()
+            kwargs["contraseña_hash"] = hash_password(password.strip())
+            del kwargs["contraseña"]
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
