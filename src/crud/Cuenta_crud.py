@@ -25,7 +25,7 @@ class CuentaCRUD:
         tipo_cuenta: str,
         saldo: float,
         fecha_apertura: date,
-        estado: str,
+        estado: bool,
         id_cliente: UUID,
         id_usuario_crea: UUID = None,
     ) -> Cuenta:
@@ -64,7 +64,7 @@ class CuentaCRUD:
         if not fecha_apertura:
             raise ValueError("La fecha de la sanción es obligatoria")
 
-        if not estado:
+        if estado is None:
             raise ValueError("El estado de la cuenta es obligatorio")
 
         from src.entities.Cliente import Cliente
