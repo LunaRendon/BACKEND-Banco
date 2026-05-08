@@ -21,12 +21,13 @@ router = APIRouter(
 
 @router.get("/{id_cliente}", response_model=List[CuentaResponse])
 async def obtener_cuentas(
-    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+    id_cliente: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
     """
     Obtener todas las cuentas.
 
     Args:
+        id_cliente (UUID): ID del cliente.
         skip (int, opcional): Número de registros a omitir. Default 0.
         limit (int, opcional): Número máximo de registros a retornar. Default 100.
         db (Session): Sesión de base de datos.

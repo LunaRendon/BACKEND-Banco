@@ -67,7 +67,7 @@ class CuentaCRUD:
         if not estado:
             raise ValueError("El estado de la cuenta es obligatorio")
 
-        from entities.Cliente import Cliente
+        from src.entities.Cliente import Cliente
 
         cliente = (
             self.db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
@@ -76,7 +76,7 @@ class CuentaCRUD:
             raise ValueError("El cliente especificado no existe")
 
         if id_usuario_crea is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
@@ -279,7 +279,7 @@ class CuentaCRUD:
             kwargs["estado"] = estado
 
         if id_usuario_edita is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
