@@ -1,14 +1,10 @@
 # Backend Banco — API REST
 
-Backend de un sistema bancario desarrollado con FastAPI, SQLAlchemy y PostgreSQL (Neon). Expone una API REST para gestionar bancos, clientes, cuentas, operaciones financieras y tarjetas, con autenticación JWT y menú interactivo por consola.
-
-## 🎥 Video(Entrega 2)
-
-[![Ver demo](https://img.shields.io/badge/Ver%20Demo-Google%20Drive-blue?logo=googledrive)](https://drive.google.com/file/d/1RK-WKW7WKS-xGMXiHenS_TIHh8SfwvUW/view?usp=sharing)
+Backend de un sistema bancario desarrollado con **FastAPI**, **SQLAlchemy** y **PostgreSQL (Neon)**. Expone una API REST para gestionar bancos, clientes, cuentas, operaciones financieras, préstamos y tarjetas, con autenticación de usuarios y menú interactivo por consola.
 
 ## Descripción
 
-Este proyecto implementa el backend de un sistema bancario universitario. Permite registrar bancos, vincular clientes a ellos, gestionar cuentas de ahorro o corriente, realizar operaciones financieras (depósitos, retiros y transferencias) y administrar tarjetas débito/crédito.
+Este proyecto implementa el backend de un sistema bancario universitario. Permite registrar bancos, vincular clientes a ellos, gestionar cuentas de ahorro o corriente, realizar operaciones financieras (depósitos, retiros y transferencias), administrar préstamos y gestionar tarjetas débito/crédito.
 
 El sistema cuenta con dos formas de interacción:
 
@@ -34,8 +30,7 @@ El sistema cuenta con dos formas de interacción:
 
 ## Estructura del proyecto
 
-```
-
+```text
 BACKEND-Banco/
 ├── main.py                      # Punto de entrada — menú por consola + API
 ├── alembic.ini                  # Configuración de migraciones Alembic
@@ -43,53 +38,56 @@ BACKEND-Banco/
 ├── .env                         # Variables de entorno (no subir al repositorio)
 ├── init.db.py                   # Script de inicialización de la base de datos
 └── src/
-├── core/
-│   ├── auth.py              # JWT: generación, validación y dependencia get_current_user
-│   ├── config.py            # Configuración centralizada (JWT, CORS) desde .env
-│   ├── exceptions.py        # Excepciones personalizadas
-│   ├── error_handlers.py    # Manejadores globales de errores
-│   └── responses.py         # Modelos de respuesta estándar
-├── crud/
-│   ├── Banco_crud.py        # Operaciones CRUD — Banco
-│   ├── Cliente_crud.py      # Operaciones CRUD — Cliente
-│   ├── Cuenta_crud.py       # Operaciones CRUD — Cuenta
-│   ├── Operacion_crud.py    # Operaciones CRUD — Operación financiera
-│   ├── Tarjeta_crud.py      # Operaciones CRUD — Tarjeta
-│   ├── Usuario_crud.py      # Operaciones CRUD — Usuario administrador
-│   └── Usuario_App_crud.py  # Operaciones CRUD — Usuario de la app
-├── database/
-│   └── config.py            # Conexión SQLAlchemy + sesión + base declarativa
-├── endpoints/
-│   ├── Banco.py             # Router FastAPI — /bancos
-│   ├── Cliente.py           # Router FastAPI — /clientes
-│   ├── Cuenta.py            # Router FastAPI — /cuentas
-│   ├── Login.py             # Router FastAPI — /usuarios_app/login
-│   ├── Operacion.py         # Router FastAPI — /operaciones
-│   ├── Tarjeta.py           # Router FastAPI — /tarjetas
-│   ├── Usuario.py           # Router FastAPI — /usuarios
-│   └── Uusuario_App.py      # Router FastAPI — /usuarios_app
-├── entities/
-│   ├── Banco.py             # Modelo SQLAlchemy — tabla banco
-│   ├── Cliente.py           # Modelo SQLAlchemy — tabla cliente
-│   ├── Cuenta.py            # Modelo SQLAlchemy — tabla cuenta
-│   ├── Operacion.py         # Modelo SQLAlchemy — tabla operacion
-│   ├── Tarjeta.py           # Modelo SQLAlchemy — tabla tarjeta
-│   ├── Usuario.py           # Modelo SQLAlchemy — tabla usuario
-│   └── Usuario_App.py       # Modelo SQLAlchemy — tabla usuario_app
-├── migrations/
-│   └── env.py               # Entorno de migraciones Alembic
-├── schemas/
-│   ├── Banco_schema.py      # Pydantic — validación y serialización de Banco
-│   ├── Cliente_schema.py
-│   ├── Cuenta_schema.py
-│   ├── Operacion_schema.py
-│   ├── Tarjeta_schema.py
-│   ├── Usuario_schema.py
-│   ├── Usuario_App_schema.py
-│   └── schemas.py           # Esquema genérico de respuesta (RespuestaAPI)
-└── utils/
-├── app.py               # Instancia FastAPI + CORS + registro de routers
-└── security.py          # Hash y verificación de contraseñas con bcrypt
+    ├── auth/
+    │   └── security.py      # Gestión de contraseñas (hash + verificación)
+    ├── core/
+    │   ├── exceptions.py    # Excepciones personalizadas
+    │   ├── error_handlers.py# Manejadores globales de errores
+    │   └── responses.py     # Modelos de respuesta estándar
+    ├── crud/
+    │   ├── Banco_crud.py    # Operaciones CRUD — Banco
+    │   ├── Cliente_crud.py  # Operaciones CRUD — Cliente
+    │   ├── Cuenta_crud.py   # Operaciones CRUD — Cuenta
+    │   ├── Operacion_crud.py# Operaciones CRUD — Operación financiera
+    │   ├── Prestamo_crud.py # Operaciones CRUD — Prestamo
+    │   ├── Tarjeta_crud.py  # Operaciones CRUD — Tarjeta
+    │   ├── Usuario_crud.py  # Operaciones CRUD — Usuario administrador
+    │   └── Usuario_App_crud.py # Operaciones CRUD — Usuario de la app
+    |   └──
+    ├── database/
+    │   └── config.py        # Conexión SQLAlchemy + sesión + base declarativa
+    ├── endpoints/
+    │   ├── Banco.py         # Router FastAPI — /bancos
+    │   ├── Cliente.py       # Router FastAPI — /clientes
+    │   ├── Cuenta.py        # Router FastAPI — /cuentas
+    │   ├── Operacion.py     # Router FastAPI — /operaciones
+    │   ├── Prestamos.py     # Router FastAPI — /prestamos
+    │   ├── Tarjeta.py       # Router FastAPI — /tarjetas
+    │   ├── Usuario.py       # Router FastAPI — /usuarios
+    │   └── Uusuario_App.py  # Router FastAPI — /usuarios-app
+    ├── entities/
+    │   ├── Banco.py         # Modelo SQLAlchemy — tabla banco
+    │   ├── Cliente.py       # Modelo SQLAlchemy — tabla cliente
+    │   ├── Cuenta.py        # Modelo SQLAlchemy — tabla cuenta
+    │   ├── Operacion.py     # Modelo SQLAlchemy — tabla operacion
+    │   ├── Prestamo.py      # Modelo SQLAlchemy — tabla prestamo
+    │   ├── Tarjeta.py       # Modelo SQLAlchemy — tabla tarjeta
+    │   ├── Usuario.py       # Modelo SQLAlchemy — tabla usuario
+    │   └── Usuario_App.py   # Modelo SQLAlchemy — tabla usuario_app
+    ├── migrations/
+    │   └── env.py           # Entorno de migraciones Alembic
+    ├── schemas/
+    │   ├── Banco_schema.py  # Pydantic — validación y serialización de Banco
+    │   ├── Cliente_schema.py
+    │   ├── Cuenta_schema.py
+    │   ├── Operacion_schema.py
+    │   ├── Prestamo_schema.py
+    │   ├── Tarjeta_schema.py
+    │   ├── Usuario_schema.py
+    │   ├── Usuario_App_schema.py
+    │   └── schemas.py       # Esquema genérico de respuesta (RespuestaAPI)
+    └── utils/
+        └── app.py           # Instancia FastAPI + registro de routers y handlers
 ```
 ---
 
@@ -137,7 +135,13 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 
 ### Opción 1 — Menú por consola
 ```bash
-python main.py
+cd src
+python ../main.py
+```
+
+El menú permite gestionar todas las entidades sin necesidad de un cliente HTTP:
+
+```
 ```
 
 ### Opción 2 — Solo la API REST
