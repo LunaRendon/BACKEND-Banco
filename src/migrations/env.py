@@ -17,6 +17,7 @@ from entities.Operacion import Operacion
 from entities.Tarjeta import Tarjeta
 from entities.Usuario_App import Usuario_App
 from entities.Usuario import Usuario
+from entities.Prestamos import Prestamos
 
 # this is the Alembic Config object, which provides
 # access t

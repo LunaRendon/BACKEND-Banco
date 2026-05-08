@@ -53,7 +53,6 @@ async def obtener_usuarios(
 @router.get(
     "/username/{username}",
     response_model=UsuarioAppResponse,
-    dependencies=[Depends(get_current_user)],
 )
 async def obtener_usuario_por_username(username: str, db: Session = Depends(get_db)):
     """
@@ -182,7 +181,6 @@ async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(ge
 @router.put(
     "/{id_usuario}",
     response_model=UsuarioAppResponse,
-    dependencies=[Depends(get_current_user)],
 )
 async def actualizar_usuario(
     id_usuario: UUID,

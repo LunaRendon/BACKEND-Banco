@@ -34,6 +34,7 @@ class Cliente(Base):
     fecha_edicion = Column(DateTime(timezone=True), onupdate=func.now())
 
     id_banco = Column(UUID(as_uuid=True), ForeignKey("banco.id_banco"))
+    prestamos = relationship("Prestamo", back_populates="cliente")
 
     id_usuario_crea = Column(
         UUID(as_uuid=True), ForeignKey("usuarios.id_usuario"), nullable=True
