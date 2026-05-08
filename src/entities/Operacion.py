@@ -55,7 +55,7 @@ class Operacion(Base):
     id_prestamo = Column(
         UUID(as_uuid=True), ForeignKey("prestamos.id_prestamo"), nullable=True
     )
-    prestamo = relationship("Prestamo", back_populates="operaciones")
+    prestamo = relationship("Prestamos", back_populates="operaciones")
 
     def __repr__(self):
         return f"<Operacion(id_operacion={self.id_operacion}, tipo_operacion='{self.tipo_operacion}', monto={self.monto})>"

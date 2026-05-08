@@ -48,7 +48,6 @@ class CuentaResponse(CuentaBase):
     fecha_edicion: Optional[datetime] = None
 
     cliente: Optional[ClienteSimpleResponse] = None
-    banco: Optional[BancoSimpleResponse] = None
 
     class Config:
         from_attributes = True
