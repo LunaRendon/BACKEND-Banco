@@ -12,7 +12,7 @@ class UsuarioAppBase(BaseModel):
     username: str
     estado: bool
     rol: str = "cliente"
-    id_cuenta: Optional[UUID] = None
+    id_cliente: Optional[UUID] = None
 
 
 class UsuarioAppCreate(UsuarioAppBase):
@@ -24,7 +24,7 @@ class UsuarioAppUpdate(BaseModel):
     contraseña: Optional[str] = None
     estado: Optional[bool] = None
     rol: Optional[str] = None
-    id_cuenta: Optional[UUID] = None
+    id_cliente: Optional[UUID] = None
 
 
 class UsuarioAppResponse(UsuarioAppBase):

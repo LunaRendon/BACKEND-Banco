@@ -19,6 +19,22 @@ router = APIRouter(
 )
 
 
+@router.get("/", response_model=List[CuentaResponse])
+async def obtener_todas_cuentas(
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+):
+    try:
+        cuenta_crud = CuentaCRUD(db)
+        cuentas = cuenta_crud.obtener_cuentas(skip=skip, limit=limit)
+        return cuentas
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener las cuentas: {str(e)}",
+        )
+
+
 @router.get("/{id_cliente}", response_model=List[CuentaResponse])
 async def obtener_cuentas(
     id_cliente: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)

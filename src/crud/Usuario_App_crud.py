@@ -19,14 +19,13 @@ class UsuarioAppCRUD:
         username: str,
         contraseña: str,
         estado: bool,
-        id_cuenta: UUID,
+        id_cliente: UUID,
         rol: str = "cliente",
     ) -> Usuario_App:
         """
         Crea un nuevo usuario de la app.
 
-        Se realizan validaciones básicas y se verifica
-        que la cuenta exista.
+        Se realizan validaciones básicas, se crea una cuenta para el cliente y se registra el usuario.
         """
 
         if not username or len(username.strip()) == 0:
@@ -42,27 +41,54 @@ class UsuarioAppCRUD:
         if not estado:
             raise ValueError("El estado es obligatorio")
 
-        if id_cuenta:
-            from src.entities.Cuenta import Cuenta
+        if not id_cliente:
+            raise ValueError("El ID del cliente es obligatorio")
 
-            cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
-        if not cuenta:
-            raise ValueError("La cuenta especificada no existe")
+        # Verificar que el cliente existe
+        from src.entities.Cliente import Cliente
+
+        cliente = (
+            self.db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
+        )
+        if not cliente:
+            raise ValueError("El cliente especificado no existe")
+
+        # Verificar si el cliente ya tiene un usuario registrado
+        from src.entities.Cuenta import Cuenta
 
         usuario_existente = (
             self.db.query(Usuario_App)
-            .filter(Usuario_App.id_cuenta == id_cuenta)
+            .join(Cuenta, Usuario_App.id_cuenta == Cuenta.id_cuenta)
+            .filter(Cuenta.id_cliente == id_cliente)
             .first()
         )
         if usuario_existente:
-            raise ValueError("Esta cuenta bancaria ya tiene un usuario registrado")
+            raise ValueError("Este cliente ya tiene un usuario registrado")
+
+        # Crear la cuenta para el cliente
+        from src.crud.Cuenta_crud import CuentaCRUD
+        from datetime import date
+        import uuid
+
+        cuenta_crud = CuentaCRUD(self.db)
+        numero_cuenta = str(
+            uuid.uuid4().hex[:10]
+        ).upper()  # Generar un número de cuenta único
+        nueva_cuenta = cuenta_crud.crear_cuenta(
+            numero_cuenta=numero_cuenta,
+            tipo_cuenta="Ahorros",
+            saldo=0.0,
+            fecha_apertura=date.today(),
+            estado=True,
+            id_cliente=id_cliente,
+        )
 
         usuario = Usuario_App(
             username=username.strip(),
             contraseña_hash=hash_password(contraseña),
             estado=estado,
             rol=rol,
-            id_cuenta=id_cuenta,
+            id_cuenta=nueva_cuenta.id_cuenta,
         )
 
         self.db.add(usuario)

@@ -166,7 +166,7 @@ async def crear_usuario(usuario_data: UsuarioAppCreate, db: Session = Depends(ge
             contraseña=usuario_data.contraseña,
             estado=usuario_data.estado,
             rol=usuario_data.rol,
-            id_cuenta=usuario_data.id_cuenta,
+            id_cliente=usuario_data.id_cliente,
         )
         return usuario
     except ValueError as e:
