@@ -69,7 +69,7 @@ class PrestamoCRUD:
         if not id_cliente:
             raise ValueError("El cliente es obligatorio")
         if id_usuario_crea is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
@@ -205,7 +205,7 @@ class PrestamoCRUD:
             return None
 
         if id_usuario_edita is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
