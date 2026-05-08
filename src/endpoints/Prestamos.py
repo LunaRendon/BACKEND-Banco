@@ -13,12 +13,29 @@ from src.schemas.schemas import RespuestaAPI
 from sqlalchemy.orm import Session
 from src.core.auth import get_current_user
 from fastapi import Depends
+import traceback
 
 router = APIRouter(
     prefix="/prestamos",
     tags=["prestamos"],
     dependencies=[Depends(get_current_user)],
 )
+
+
+@router.get("/", response_model=List[PrestamoResponse])
+async def obtener_todos_prestamos(
+    skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+):
+    try:
+        Prestamo_crud = PrestamoCRUD(db)
+        Prestamos = Prestamo_crud.obtener_todos_prestamos(skip=skip, limit=limit)
+        return Prestamos
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener los préstamos: {str(e)}",
+        )
 
 
 @router.get("/{id_cliente}", response_model=List[PrestamoResponse])
@@ -81,8 +98,12 @@ async def obtener_prestamos_por_cuenta(
         )
 
 
-@router.post("/", response_model=PrestamoResponse, status_code=status.HTTP_201_CREATED)
-async def crear_prestamo(prestamo_data: PrestamoCreate, db: Session = Depends(get_db)):
+@router.post("", response_model=PrestamoResponse, status_code=status.HTTP_201_CREATED)
+async def crear_prestamo(
+    prestamo_data: PrestamoCreate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     try:
         Prestamos_crud = PrestamoCRUD(db)
         prestamos = Prestamos_crud.crear_prestamo(
@@ -94,12 +115,12 @@ async def crear_prestamo(prestamo_data: PrestamoCreate, db: Session = Depends(ge
             fecha_fin=prestamo_data.fecha_fin,
             id_cliente=prestamo_data.id_cliente,
             id_cuenta=prestamo_data.id_cuenta,
+            id_usuario_crea=current_user.id_usuario,
         )
         return prestamos
 
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al crear el prestamo: {str(e)}",

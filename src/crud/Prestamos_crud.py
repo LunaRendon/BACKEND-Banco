@@ -29,6 +29,7 @@ class PrestamoCRUD:
         fecha_fin: date,
         id_cuenta: UUID,
         id_cliente: UUID,
+        id_usuario_crea: UUID = None,
     ) -> Prestamos:
         """
         Crea un nuevo préstamo.
@@ -69,14 +70,7 @@ class PrestamoCRUD:
         if not id_cliente:
             raise ValueError("El cliente es obligatorio")
         if id_usuario_crea is None:
-            from src.entities.Usuario import Usuario
-
-            admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
-            if not admin:
-                raise ValueError(
-                    "No se encontró un usuario administrador para crear el préstamo"
-                )
-            id_usuario_crea = admin.id_usuario
+            raise ValueError("El usuario autenticado es obligatorio")
 
         prestamos = Prestamos(
             monto=monto,
@@ -110,12 +104,22 @@ class PrestamoCRUD:
         """
         return (
             self.db.query(Prestamos)
-            .filter(Prestamos.id == id_prestamo, Prestamos.id_cliente == id_cliente)
+            .filter(
+                Prestamos.id_prestamo == id_prestamo, Prestamos.id_cliente == id_cliente
+            )
             .first()
         )
 
-    def obtener_prestamos(self, skip: int = 0, limit: int = 100) -> List[Prestamos]:
-        return self.db.query(Prestamos).offset(skip).limit(limit).all()
+    def obtener_prestamos(
+        self, id_cliente: UUID, skip: int = 0, limit: int = 100
+    ) -> List[Prestamos]:
+        return (
+            self.db.query(Prestamos)
+            .filter(Prestamos.id_cliente == id_cliente)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
         """
         Obtiene préstamos realizados en una fecha específica.
@@ -287,3 +291,8 @@ class PrestamoCRUD:
             self.db.commit()
             return True
         return False
+
+    def obtener_todos_prestamos(
+        self, skip: int = 0, limit: int = 100
+    ) -> List[Prestamos]:
+        return self.db.query(Prestamos).offset(skip).limit(limit).all()
