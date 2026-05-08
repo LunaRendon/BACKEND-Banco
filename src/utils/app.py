@@ -1,6 +1,6 @@
 """
 Aplicación FastAPI. Ejecutar con:
-  uvicorn utils.app:app --reload --host 127.0.0.1 --port 8000
+  uvicorn src.utils.app:app --reload --host 127.0.0.1 --port 8000
 """
 
 from contextlib import asynccontextmanager
@@ -20,6 +20,7 @@ from src.endpoints import (
     Usuario,
     Uusuario_App,
     login,
+    Prestamos,
 )
 from src.core.config import get_settings
 from src.core.exceptions import AppException
@@ -38,6 +39,7 @@ import src.entities.Operacion  # noqa: F401
 import src.entities.Tarjeta  # noqa: F401
 import src.entities.Usuario  # noqa: F401
 import src.entities.Usuario_App  # noqa: F401
+import src.entities.Prestamos  # noqa: F401
 
 
 @asynccontextmanager
@@ -76,6 +78,7 @@ app.include_router(Tarjeta.router)
 app.include_router(Uusuario_App.router)
 app.include_router(Usuario.router)
 app.include_router(login.router)
+app.include_router(Prestamos.router)
 
 
 @app.get("/")
