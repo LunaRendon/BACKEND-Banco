@@ -133,6 +133,7 @@ async def actualizar_prestamo(
     id_cliente: UUID,
     prestamo_data: PrestamoUpdate,
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     try:
         Prestamos_cud = PrestamoCRUD(db)
@@ -153,7 +154,10 @@ async def actualizar_prestamo(
             return prestamos_existentes
 
         prestamo_actualizado = Prestamos_cud.actualizar_prestamo(
-            id_prestamo, id_cliente, **campos_actualizacion
+            id_prestamo,
+            id_cliente,
+            id_usuario_edita=current_user.id_usuario,
+            **campos_actualizacion,
         )
         return prestamo_actualizado
 

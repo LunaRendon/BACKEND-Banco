@@ -209,14 +209,7 @@ class PrestamoCRUD:
             return None
 
         if id_usuario_edita is None:
-            from src.entities.Usuario import Usuario
-
-            admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
-            if not admin:
-                raise ValueError(
-                    "No se encontró un usuario administrador para editar el préstamo"
-                )
-            id_usuario_edita = admin.id_usuario
+            raise ValueError("El usuario autenticado es obligatorio")
 
         prestamos.id_usuario_edita = id_usuario_edita
 
