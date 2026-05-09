@@ -76,7 +76,7 @@ class UsuarioAppCRUD:
         ).upper()  # Generar un número de cuenta único
         nueva_cuenta = cuenta_crud.crear_cuenta(
             numero_cuenta=numero_cuenta,
-            tipo_cuenta="Ahorros",
+            tipo_cuenta="ahorros",
             saldo=0.0,
             fecha_apertura=date.today(),
             estado=True,
