@@ -152,10 +152,7 @@ class UsuarioAppCRUD:
             del kwargs["contraseña"]
 
         if "estado" in kwargs:
-            estado = kwargs["estado"]
-            if not estado or len(estado) == 0:
-                raise ValueError("El estado es obligatorio")
-            kwargs["estado"] = estado
+            kwargs["estado"] = kwargs["estado"]
 
         if "id_cuenta" in kwargs:
             id_cuenta = kwargs["id_cuenta"]
