@@ -163,7 +163,7 @@ class TarjetaCRUD:
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
-            if not estado or len(estado) == 0:
+            if estado is None:
                 raise ValueError("El estado es obligatorio")
             kwargs["estado"] = estado
 
