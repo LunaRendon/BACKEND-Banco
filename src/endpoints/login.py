@@ -49,4 +49,5 @@ def login(dato: LoginData, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "expires_in": settings.access_token_expire_minutes * 60,
         "rol": usuario.rol,
+        "id_cuenta": str(usuario.id_cuenta) if usuario.id_cuenta else None,
     }

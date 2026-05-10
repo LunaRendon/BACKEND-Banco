@@ -25,7 +25,7 @@ class CuentaCRUD:
         tipo_cuenta: str,
         saldo: float,
         fecha_apertura: date,
-        estado: str,
+        estado: bool,
         id_cliente: UUID,
         id_usuario_crea: UUID = None,
     ) -> Cuenta:
@@ -64,10 +64,10 @@ class CuentaCRUD:
         if not fecha_apertura:
             raise ValueError("La fecha de la sanción es obligatoria")
 
-        if not estado:
+        if estado is None:
             raise ValueError("El estado de la cuenta es obligatorio")
 
-        from entities.Cliente import Cliente
+        from src.entities.Cliente import Cliente
 
         cliente = (
             self.db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
@@ -76,7 +76,7 @@ class CuentaCRUD:
             raise ValueError("El cliente especificado no existe")
 
         if id_usuario_crea is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
@@ -119,6 +119,17 @@ class CuentaCRUD:
 
     def obtener_cuentas(self, skip: int = 0, limit: int = 100) -> List[Cuenta]:
         return self.db.query(Cuenta).offset(skip).limit(limit).all()
+
+    def obtener_cuentas_por_cliente(
+        self, id_cliente: UUID, skip: int = 0, limit: int = 100
+    ) -> List[Cuenta]:
+        return (
+            self.db.query(Cuenta)
+            .filter(Cuenta.id_cliente == id_cliente)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     def obtener_cuenta_por_numeroCuenta(
         self, numero_cuenta: int, id_cliente: UUID
@@ -262,7 +273,7 @@ class CuentaCRUD:
 
         if "saldo" in kwargs:
             saldo = kwargs["saldo"]
-            if not saldo or len(saldo) == 0:
+            if saldo is None:
                 raise ValueError("El saldo es obligatorio")
             kwargs["saldo"] = saldo
 
@@ -274,12 +285,12 @@ class CuentaCRUD:
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
-            if not estado or len(estado) == 0:
+            if estado is None:
                 raise ValueError("El estado es obligatorio")
             kwargs["estado"] = estado
 
         if id_usuario_edita is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:

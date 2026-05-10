@@ -32,7 +32,9 @@ class Usuario_App(Base):
     estado = Column(Boolean, default=False, nullable=True)
     rol = Column(String(20), nullable=False, default="cliente")
 
-    id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), unique=True)
+    id_cuenta = Column(
+        UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"), nullable=True
+    )
 
     cuenta = relationship("Cuenta", back_populates="usuario_app")
 

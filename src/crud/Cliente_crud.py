@@ -70,14 +70,14 @@ class ClienteCRUD:
         if not direccion or len(direccion.strip()) == 0:
             raise ValueError("La direccion es obligatoria")
 
-        from entities.Banco import Banco
+        from src.entities.Banco import Banco
 
         banco = self.db.query(Banco).filter(Banco.id_banco == id_banco).first()
         if not banco:
             raise ValueError("El banco especificado no existe")
 
         if id_usuario_crea is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
@@ -311,7 +311,7 @@ class ClienteCRUD:
             kwargs["direccion"] = direccion.strip()
 
         if id_usuario_edita is None:
-            from entities.Usuario import Usuario
+            from src.entities.Usuario import Usuario
 
             admin = self.db.query(Usuario).filter(Usuario.es_admin == True).first()
             if not admin:
@@ -339,7 +339,7 @@ class ClienteCRUD:
         Args:
             id_cliente (UUID): Identificador único del cliente.
             tipo_documento (str): Nuevo tipo de documento del cliente.
-            id_biblioteca (UUID): Identificador único del banco.
+            id_banco (UUID): Identificador único del banco.
 
         Returns:
             Optional[Cliente]: Cliente actualizado o None si no existe.
@@ -366,7 +366,7 @@ class ClienteCRUD:
         Args:
             id_cliente (UUID): Identificador único del cliente.
             telefono (str): Nuevo telefono del cliente.
-            id_biblioteca (UUID): Identificador único del banco.
+            id_banco (UUID): Identificador único del banco.
 
         Returns:
             Optional[Cliente]: Cliente actualizado o None si no existe.
@@ -388,7 +388,7 @@ class ClienteCRUD:
         Args:
             id_cliente (UUID): Identificador único del cliente.
            correo(str): nuevo correo del cliente
-            id_biblioteca (UUID): Identificador único del banco.
+            id_banco (UUID): Identificador único del banco.
 
         Returns:
             Optional[Cliente]: Cliente actualizado o None si no existe.

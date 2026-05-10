@@ -19,14 +19,13 @@ class UsuarioAppCRUD:
         username: str,
         contraseña: str,
         estado: bool,
-        id_cuenta: UUID,
+        id_cliente: UUID,
         rol: str = "cliente",
     ) -> Usuario_App:
         """
         Crea un nuevo usuario de la app.
 
-        Se realizan validaciones básicas y se verifica
-        que la cuenta exista.
+        Se realizan validaciones básicas, se crea una cuenta para el cliente y se registra el usuario.
         """
 
         if not username or len(username.strip()) == 0:
@@ -42,22 +41,54 @@ class UsuarioAppCRUD:
         if not estado:
             raise ValueError("El estado es obligatorio")
 
-        if not id_cuenta:
-            raise ValueError("La cuenta es obligatoria")
+        if not id_cliente:
+            raise ValueError("El ID del cliente es obligatorio")
 
+        # Verificar que el cliente existe
+        from src.entities.Cliente import Cliente
+
+        cliente = (
+            self.db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
+        )
+        if not cliente:
+            raise ValueError("El cliente especificado no existe")
+
+        # Verificar si el cliente ya tiene un usuario registrado
         from src.entities.Cuenta import Cuenta
 
-        cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
+        usuario_existente = (
+            self.db.query(Usuario_App)
+            .join(Cuenta, Usuario_App.id_cuenta == Cuenta.id_cuenta)
+            .filter(Cuenta.id_cliente == id_cliente)
+            .first()
+        )
+        if usuario_existente:
+            raise ValueError("Este cliente ya tiene un usuario registrado")
 
-        if not cuenta:
-            raise ValueError("La cuenta especificada no existe")
+        # Crear la cuenta para el cliente
+        from src.crud.Cuenta_crud import CuentaCRUD
+        from datetime import date
+        import uuid
+
+        cuenta_crud = CuentaCRUD(self.db)
+        numero_cuenta = str(
+            uuid.uuid4().hex[:10]
+        ).upper()  # Generar un número de cuenta único
+        nueva_cuenta = cuenta_crud.crear_cuenta(
+            numero_cuenta=numero_cuenta,
+            tipo_cuenta="ahorros",
+            saldo=0.0,
+            fecha_apertura=date.today(),
+            estado=True,
+            id_cliente=id_cliente,
+        )
 
         usuario = Usuario_App(
             username=username.strip(),
             contraseña_hash=hash_password(contraseña),
             estado=estado,
             rol=rol,
-            id_cuenta=id_cuenta,
+            id_cuenta=nueva_cuenta.id_cuenta,
         )
 
         self.db.add(usuario)
@@ -117,13 +148,11 @@ class UsuarioAppCRUD:
             if len(password) > 255:
                 raise ValueError("La contraseña no puede exceder 255 caracteres")
 
-            kwargs["contraseña"] = password.strip()
+            kwargs["contraseña_hash"] = hash_password(password.strip())
+            del kwargs["contraseña"]
 
         if "estado" in kwargs:
-            estado = kwargs["estado"]
-            if not estado or len(estado) == 0:
-                raise ValueError("El estado es obligatorio")
-            kwargs["estado"] = estado
+            kwargs["estado"] = kwargs["estado"]
 
         if "id_cuenta" in kwargs:
             id_cuenta = kwargs["id_cuenta"]

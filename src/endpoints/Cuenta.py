@@ -19,14 +19,31 @@ router = APIRouter(
 )
 
 
-@router.get("/{id_cliente}", response_model=List[CuentaResponse])
-async def obtener_cuentas(
+@router.get("/", response_model=List[CuentaResponse])
+async def obtener_todas_cuentas(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
+    try:
+        cuenta_crud = CuentaCRUD(db)
+        cuentas = cuenta_crud.obtener_cuentas(skip=skip, limit=limit)
+        return cuentas
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener las cuentas: {str(e)}",
+        )
+
+
+@router.get("/{id_cliente}", response_model=List[CuentaResponse])
+async def obtener_cuentas(
+    id_cliente: UUID, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+):
     """
-    Obtener todas las cuentas.
+    Obtener todas las cuentas de un cliente.
 
     Args:
+        id_cliente (UUID): ID del cliente.
         skip (int, opcional): Número de registros a omitir. Default 0.
         limit (int, opcional): Número máximo de registros a retornar. Default 100.
         db (Session): Sesión de base de datos.
@@ -36,7 +53,9 @@ async def obtener_cuentas(
     """
     try:
         cuenta_crud = CuentaCRUD(db)
-        cuentas = cuenta_crud.obtener_cuentas(skip=skip, limit=limit)
+        cuentas = cuenta_crud.obtener_cuentas_por_cliente(
+            id_cliente, skip=skip, limit=limit
+        )
         return cuentas
 
     except Exception as e:
@@ -255,6 +274,10 @@ async def actualizar_cuenta(
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
+        print(f"ERROR ACTUALIZAR CUENTA: {type(e).__name__}: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al actualizar la cuenta: {str(e)}",
@@ -301,6 +324,10 @@ async def eliminar_cuenta(
     except HTTPException:
         raise
     except Exception as e:
+        print(f"ERROR ELIMINAR CUENTA: {type(e).__name__}: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al eliminar la cuenta: {str(e)}",
