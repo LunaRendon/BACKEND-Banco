@@ -3,7 +3,7 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from src.database.config import Base
-from sqlalchemy import Column, ForeignKey, String, Date, Boolean
+from sqlalchemy import (Column, ForeignKey, String, Date, Boolean, DateTime)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -29,8 +29,9 @@ class Tarjeta(Base):
     fecha_vencimiento = Column(Date, nullable=False)
     cvv = Column(String(4), nullable=False)
     estado = Column(Boolean, default=True)
-
     id_cuenta = Column(UUID(as_uuid=True), ForeignKey("cuentas.id_cuenta"))
+    fecha_creacion = Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
+    fecha_edicion = Column(DateTime(timezone=True),onupdate=func.now(),nullable=True)
 
     cuenta = relationship("Cuenta", back_populates="tarjetas")
 

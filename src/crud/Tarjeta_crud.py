@@ -48,7 +48,7 @@ class TarjetaCRUD:
         if not estado:
             raise ValueError("El estado de la cuenta es obligatorio")
 
-        from entities.Cuenta import Cuenta
+        from src.entities.Cuenta import Cuenta
 
         cuenta = self.db.query(Cuenta).filter(Cuenta.id_cuenta == id_cuenta).first()
         if not cuenta:
@@ -163,7 +163,7 @@ class TarjetaCRUD:
 
         if "estado" in kwargs:
             estado = kwargs["estado"]
-            if not estado or len(estado) == 0:
+            if estado is None:
                 raise ValueError("El estado es obligatorio")
             kwargs["estado"] = estado
 

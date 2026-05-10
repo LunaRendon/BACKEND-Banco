@@ -7,7 +7,6 @@ from sqlalchemy import Column, String, DateTime, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-
 """
 ATRIBUTOS DE LA ENTIDAD:
     id_operacion: uuid, clave primaria
@@ -52,6 +51,11 @@ class Operacion(Base):
         foreign_keys=[id_cuenta_destino],
         back_populates="operaciones_destino",
     )
+
+    id_prestamo = Column(
+        UUID(as_uuid=True), ForeignKey("prestamos.id_prestamo"), nullable=True
+    )
+    prestamo = relationship("Prestamos", back_populates="operaciones")
 
     def __repr__(self):
         return f"<Operacion(id_operacion={self.id_operacion}, tipo_operacion='{self.tipo_operacion}', monto={self.monto})>"
