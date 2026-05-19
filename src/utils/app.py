@@ -5,10 +5,11 @@ Aplicación FastAPI. Ejecutar con:
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import Response
 
 from src.database.config import create_tables
 from src.endpoints import (
@@ -63,6 +64,17 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response: Response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    # CSP básica para API JSON; evita carga de contenido activo inesperado.
+    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+    return response
+
 "Registrar handlers globales de core "
 app.add_exception_handler(AppException, app_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
@@ -83,4 +95,10 @@ app.include_router(Prestamos.router)
 
 @app.get("/")
 def inicio():
-    return {"mensaje": "API Banco", "docs": "/docs"}
+    return {
+        "success": True,
+        "data": {
+            "mensaje": "API Banco",
+            "docs": "/docs"
+        }
+    }
