@@ -64,16 +64,27 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
+
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response: Response = await call_next(request)
+
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-    # CSP básica para API JSON; evita carga de contenido activo inesperado.
-    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "img-src 'self' data: https://fastapi.tiangolo.com; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self';"
+    )
+
     return response
+
 
 "Registrar handlers globales de core "
 app.add_exception_handler(AppException, app_exception_handler)
@@ -95,10 +106,4 @@ app.include_router(Prestamos.router)
 
 @app.get("/")
 def inicio():
-    return {
-        "success": True,
-        "data": {
-            "mensaje": "API Banco",
-            "docs": "/docs"
-        }
-    }
+    return {"success": True, "data": {"mensaje": "API Banco", "docs": "/docs"}}
