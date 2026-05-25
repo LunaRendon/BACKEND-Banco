@@ -3,6 +3,7 @@ Configuración de base de datos.
 - Producción/CI: usa DATABASE_URL (PostgreSQL/Neon).
 - Desarrollo local: usa SQLite si DATABASE_URL no está definida.
 """
+
 import os
 from pathlib import Path
 
@@ -25,9 +26,9 @@ if not DATABASE_URL:
 _ssl_mode = os.getenv("SSL_MODE", "require")
 
 _engine_kwargs = {
-    "echo": False,           # Cambiar a True para ver consultas SQL
-    "pool_pre_ping": True,   # Verificar conexión antes de usar
-    "pool_recycle": 300,     # Reciclar conexiones cada 5 minutos
+    "echo": True,  # Cambiar a True para ver consultas SQL
+    "pool_pre_ping": True,  # Verificar conexión antes de usar
+    "pool_recycle": 300,  # Reciclar conexiones cada 5 minutos
 }
 
 if DATABASE_URL.startswith("sqlite"):
