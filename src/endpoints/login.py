@@ -33,6 +33,11 @@ def login(dato: LoginData, db: Session = Depends(get_db)):
     if not usuario.estado:
         raise HTTPException(status_code=403, detail="Usuario inactivo")
 
+    import logging
+
+    logging.warning(
+        f"LOGIN DEBUG - plain='{dato.contraseña}' hash='{usuario.contraseña_hash}' match={verify_password(dato.contraseña, usuario.contraseña_hash)}"
+    )
     if not verify_password(dato.contraseña, usuario.contraseña_hash):
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
