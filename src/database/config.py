@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 # Cargar variables de entorno
-load_dotenv()
+load_dotenv(override=False)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 import logging
