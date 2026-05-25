@@ -27,7 +27,6 @@ from src.entities.Tarjeta import Tarjeta
 from src.entities.Usuario_App import Usuario_App
 from src.utils.security import PasswordManager
 
-
 """
 Datos iniciales para las entidades Banco y Usuario.
 """
@@ -100,6 +99,26 @@ Función principal que ejecuta el proceso de seed.
 """
 
 
+def seed_usuario_app_admin(db):
+    from src.utils.security import hash_password
+
+    existing = db.query(Usuario_App).filter(Usuario_App.username == "admin").first()
+    if existing:
+        return existing
+    usuario_app = Usuario_App(
+        username="admin",
+        contraseña_hash=hash_password("admin123"),
+        estado=True,
+        rol="admin_app",
+        id_cuenta=None,
+    )
+    db.add(usuario_app)
+    db.commit()
+    db.refresh(usuario_app)
+    print("  Usuario_App creado: admin / admin123")
+    return usuario_app
+
+
 def main():
     try:
         db = SessionLocal()
@@ -110,13 +129,17 @@ def main():
             print("Sembrando usuario admin...")
             get_or_create_admin(db)
 
-            print("Seed completado.")
-        finally:
-            db.close()
+            print("Sembrando usuario_app admin...")
+            seed_usuario_app_admin(db)
 
-    except OperationalError as e:
-        print("Error de conexión a la base de datos:", e)
-        raise SystemExit(1) from e
+            print("Seed completado.")
+        except OperationalError as e:
+            print(
+                "Error de conexión a la base de datos. Verifique DATABASE_URL y que el servidor esté activo."
+            )
+            print(f"Detalles: {e}")
+    finally:
+        db.close()
 
 
 if __name__ == "__main__":
