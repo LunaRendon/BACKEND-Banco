@@ -12,13 +12,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-
-# Cargar variables de entorno
-load_dotenv(override=False)
-
-DATABASE_URL = os.getenv("DATABASE_URL")
 import logging
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
 logging.warning(
     f"DATABASE_URL cargada: {DATABASE_URL[:30] if DATABASE_URL else 'NONE'}"
 )
