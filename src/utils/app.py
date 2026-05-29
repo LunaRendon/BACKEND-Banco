@@ -5,10 +5,11 @@ Aplicación FastAPI. Ejecutar con:
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import Response
 
 from src.database.config import create_tables
 from src.endpoints import (
@@ -59,9 +60,32 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_settings.cors_origins_list(),
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "Accept"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response: Response = await call_next(request)
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "connect-src 'self' https://cdn.jsdelivr.net; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "img-src 'self' data: https://fastapi.tiangolo.com; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self';"
+    )
+
+    return response
+
 
 "Registrar handlers globales de core "
 app.add_exception_handler(AppException, app_exception_handler)
@@ -83,4 +107,4 @@ app.include_router(Prestamos.router)
 
 @app.get("/")
 def inicio():
-    return {"mensaje": "API Banco", "docs": "/docs"}
+    return {"success": True, "data": {"mensaje": "API Banco", "docs": "/docs"}}
